@@ -3,11 +3,23 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { registerLicense } from '@syncfusion/ej2-base';
+import { ContextProvider } from './contexts/ContextProvider';
+import { Provider } from 'react-redux';
+import store from './store';
+
+// Registering Syncfusion license key
+registerLicense(process.env.REACT_APP_KEY);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      {' '}
+      <ContextProvider>
+        <App />{' '}
+      </ContextProvider>
+    </Provider>
   </React.StrictMode>
 );
 

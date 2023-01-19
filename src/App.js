@@ -2,12 +2,9 @@ import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Register from './screens/Signup';
 import Login from './screens/Signin';
-import { ToastContainer } from 'react-toastify';
 import Dashboard from './screens/Dashboard';
 import PrivateRoute from './routes/PrivateRoute';
-// import CreateUser from './screens/CreateUser';
 import Main from './screens/Main';
-// import UserList from './screens/UserList';
 import AddAssistant from './screens/AddAssistant';
 import Denied from './screens/Denied';
 import Home from './screens/Home';
@@ -39,8 +36,6 @@ function App() {
               <Route path="tasks" element={<Tasks />} />
               <Route path="editor" element={<Editor />} />
               <Route path="colorPicker" element={<ColorPicker />} />
-
-              {/* <Route path="create/user/:id" element={<CreateUser />} /> */}
             </Route>
           </Route>
           <Route path="/login" element={<Login />} />

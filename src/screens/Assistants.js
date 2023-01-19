@@ -14,15 +14,31 @@ import {
 
 import { customersData, customersGrid } from '../data/dummy';
 import Header from '../components/Header';
+import { useStateContext } from '../contexts/ContextProvider';
+import { FaPlus } from 'react-icons/fa';
 
 export default function Assistants() {
   const selectionsettings = { persistSelection: true };
   const toolbarOptions = ['Delete'];
   const editing = { allowDeleting: true, allowEditing: true };
+  const { currentColor } = useStateContext();
 
   return (
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
-      <Header category="Page" title="Assistants" />
+      <div className="flex justify-between">
+        <Header category="Page" title="Assistants" />
+
+        <button
+          type="button"
+          className=" mb-10 mt-8 text-sm font-semibold text-white p-3 hover:drop-shadow-xl hover:bg-light-gray"
+          style={{ backgroundColor: currentColor, borderRadius: '10px' }}
+        >
+          <div className="flex  justify-center ">
+            <FaPlus className=" mr-2 pt-1 " />
+            Add Assistant
+          </div>
+        </button>
+      </div>
       <GridComponent
         dataSource={customersData}
         enableHover={false}

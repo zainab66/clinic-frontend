@@ -1,13 +1,23 @@
 import React from 'react';
 import { MdOutlineCancel } from 'react-icons/md';
-
+import { logout, reset } from '../reducers/authSlice';
 import Button from '../components/Button';
 import { userProfileData } from '../data/dummy';
 import { useStateContext } from '../contexts/ContextProvider';
 import avatar from '../data/avatar.jpg';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+
 export default function UserProfile() {
   const { currentColor } = useStateContext();
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    console.log('llll');
+    dispatch(logout());
+    dispatch(reset());
+    navigate('/');
+  };
   return (
     <div className="nav-item absolute right-1 top-16 bg-white dark:bg-[#42464D] p-8 rounded-lg w-96">
       <div className="flex justify-between items-center">
@@ -66,13 +76,27 @@ export default function UserProfile() {
         ))}
       </div>
       <div className="mt-5">
-        <Button
+        <button
+          onClick={handleLogout}
+          type="button"
+          className={` mb-10 mt-8  w-full font-semibold text-white p-3 hover:drop-shadow-xl hover:bg-${currentColor} focus:bg-${currentColor}`}
+          style={{
+            backgroundColor: currentColor,
+            borderRadius: '10px',
+            color: 'white',
+          }}
+        >
+          Logout
+        </button>
+
+        {/* <Button
+          onClick={handleLogout}
           color="white"
           bgColor={currentColor}
           text="Logout"
           borderRadius="10px"
           width="full"
-        />
+        /> */}
       </div>
     </div>
   );

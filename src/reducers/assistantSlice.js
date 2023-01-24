@@ -8,6 +8,7 @@ import {
 
 const initialState = {
   usersList: [],
+  assistance: [],
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -19,40 +20,11 @@ const initialState = {
 // Register user
 export const addUsers = createAsyncThunk(
   'auth/addUser',
-  async (
-    fullName,
-    phoneNumber,
-    country,
-    state,
-    city,
-    address,
-    zipCode,
-    company,
-    role,
-    createdBy,
-    thunkAPI
-  ) => {
+  async ({ email, fullName, role, createdBy }, { rejectWithValue }) => {
     try {
-      return await addUser(
-        fullName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        address,
-        zipCode,
-        company,
-        role,
-        createdBy
-      );
+      return await addUser(email, fullName, role, createdBy);
     } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -128,7 +100,7 @@ export const updateUser = createAsyncThunk(
 );
 
 export const assistantSlice = createSlice({
-  name: 'users',
+  name: ' assistants',
   initialState,
   reducers: {
     reset: (state) => {
@@ -146,13 +118,15 @@ export const assistantSlice = createSlice({
       .addCase(addUsers.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        //state.users = action.payload;
+        state.isError = false;
+        state.message = action.payload.message;
+        state.assistance = action.payload.createdUser;
       })
       .addCase(addUsers.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-        state.message = action.error;
-        //state.users = null;
+        state.message = action.payload.message;
+        state.assistance = null;
       })
 
       .addCase(getUsers.pending, (state) => {

@@ -1,42 +1,22 @@
 import Axios from 'axios';
-// Add User
-export const addUser = async (
-  email,
-  fullName,
-  // phoneNumber,
-  // country,
-  // state,
-  // city,
-  // address,
-  // zipCode,
-  // company,
-  role,
+import { toast } from 'react-toastify';
 
-  // Password,
-  createdBy
-) => {
+// Add User
+export const addUser = async (email, fullName, role, createdBy) => {
   const response = await Axios.post(
     'http://localhost:3001/api/assistant/addUser',
     {
       email,
       fullName,
-      // phoneNumber,
-      // country,
-      // state,
-      // city,
-      // address,
-      // zipCode,
-      // company,
       role,
-      // Password,
       createdBy,
     }
   );
-  // if (response.data) {
-  //   localStorage.setItem('user', JSON.stringify(response.data));
-  // }
-  // console.log('adduser', response.data);
-
+  if (response.data.message === 'Invitation send successfully') {
+    toast.success('Invitation send successfully');
+  } else {
+    toast.error(response.data.message);
+  }
   return response.data;
 };
 

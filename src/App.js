@@ -16,10 +16,13 @@ import Calender from './screens/Calender';
 import Tasks from './screens/Tasks';
 import Editor from './screens/Editor';
 import ColorPicker from './screens/ColorPicker';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
     <div>
+      <ToastContainer />
+
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />

@@ -7,6 +7,7 @@ import { registerLicense } from '@syncfusion/ej2-base';
 import { ContextProvider } from './contexts/ContextProvider';
 import { Provider } from 'react-redux';
 import store from './store';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Registering Syncfusion license key
 registerLicense(process.env.REACT_APP_KEY);

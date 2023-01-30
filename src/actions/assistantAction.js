@@ -22,7 +22,7 @@ export const addUser = async (email, fullName, role, createdBy) => {
 
 export const getUsersList = async () => {
   const response = await Axios.get(
-    'https://xi-team-api.onrender.com/api/assistant/getUsers',
+    'http://localhost:3001/api/assistant/getUsers',
     {
       headers: {
         Authorization: `Bearer ${
@@ -31,10 +31,14 @@ export const getUsersList = async () => {
       },
     }
   );
-  // if (response.data) {
-  //   localStorage.setItem('user', JSON.stringify(response.data));
-  // }
-  // console.log('getuser', response.data);
+  return response.data;
+};
+
+export const activateUser = async (token) => {
+  const response = await Axios.post(
+    'http://localhost:3001/api/assistant/email-activate',
+    { token }
+  );
 
   return response.data;
 };
@@ -50,11 +54,6 @@ export const deleteUserInfo = async (userId) => {
       },
     }
   );
-  // if (response.data) {
-  //   localStorage.setItem('user', JSON.stringify(response.data));
-  // }
-  //console.log('deleteUser', response.data);
-
   return response.data;
 };
 
@@ -70,10 +69,5 @@ export const editUser = async (user) => {
       },
     }
   );
-  // if (response.data) {
-  //   localStorage.setItem('user', JSON.stringify(response.data));
-  // }
-  console.log('editUser', user, response.data);
-
   return response.data;
 };

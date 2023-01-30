@@ -6,7 +6,7 @@ import Dashboard from './screens/Dashboard';
 import PrivateRoute from './routes/PrivateRoute';
 import Main from './screens/Main';
 import AddAssistant from './screens/AddAssistant';
-import Denied from './screens/Denied';
+import AssistanceDashboard from './screens/AssistanceDashboard';
 import Home from './screens/Home';
 import Appointments from './screens/Appointments';
 import Patients from './screens/Patients';
@@ -17,8 +17,18 @@ import Tasks from './screens/Tasks';
 import Editor from './screens/Editor';
 import ColorPicker from './screens/ColorPicker';
 import { ToastContainer } from 'react-toastify';
+import ActivateUser from './screens/ActivateUser';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getPatients, deleteUser, updateUser } from './reducers/patientSlice';
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getPatients());
+  }, [dispatch]);
+
   return (
     <div>
       <ToastContainer />
@@ -41,10 +51,17 @@ function App() {
               <Route path="colorPicker" element={<ColorPicker />} />
             </Route>
           </Route>
+          <Route path="/activate/:token" element={<ActivateUser />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/denied" element={<PrivateRoute role="Assistant" />}>
-            <Route path="/denied" element={<Denied />} />
+          <Route
+            path="/assistance/dashboard"
+            element={<PrivateRoute role="Assistant" />}
+          >
+            <Route
+              path="/assistance/dashboard"
+              element={<AssistanceDashboard />}
+            />
           </Route>
         </Routes>
       </BrowserRouter>

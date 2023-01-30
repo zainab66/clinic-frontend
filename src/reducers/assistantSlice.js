@@ -4,6 +4,7 @@ import {
   getUsersList,
   deleteUserInfo,
   editUser,
+  activateUser,
 } from '../actions/assistantAction';
 
 const initialState = {
@@ -23,6 +24,16 @@ export const addUsers = createAsyncThunk(
   async ({ email, fullName, role, createdBy }, { rejectWithValue }) => {
     try {
       return await addUser(email, fullName, role, createdBy);
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+export const activateAssistance = createAsyncThunk(
+  'auth/activateAssistance',
+  async (token, { rejectWithValue }) => {
+    try {
+      return await activateUser(token);
     } catch (error) {
       return rejectWithValue(error.response.data);
     }

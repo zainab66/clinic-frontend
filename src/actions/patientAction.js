@@ -1,5 +1,7 @@
 import Axios from 'axios';
-// Add User
+import { toast } from 'react-toastify';
+
+// Add Patient
 export const AddPatient = async (
   email,
   firstName,
@@ -7,11 +9,9 @@ export const AddPatient = async (
   lastName,
   age,
   gender,
-  address,
-  description,
-  occupation,
-  firstVisit,
-  recurringvisit,
+  city,
+  region,
+  postalCode,
   isPatient,
   createdBy
 ) => {
@@ -24,20 +24,18 @@ export const AddPatient = async (
       lastName,
       age,
       gender,
-      address,
-      description,
-      occupation,
-      firstVisit,
-      recurringvisit,
+      city,
+      region,
+      postalCode,
       isPatient,
       createdBy,
     }
   );
-  // if (response.data) {
-  //   localStorage.setItem('user', JSON.stringify(response.data));
-  // }
-  // console.log('adduser', response.data);
-
+  if (response.data.message === 'Patient create successfully') {
+    toast.success('Patient create successfully');
+  } else {
+    toast.error(response.data.message);
+  }
   return response.data;
 };
 
@@ -52,10 +50,41 @@ export const getPatientList = async () => {
       },
     }
   );
-  // if (response.data) {
-  //   localStorage.setItem('user', JSON.stringify(response.data));
-  // }
-  // console.log('getuser', response.data);
+  return response.data.patients;
+};
 
+export const editPatient = async (patient) => {
+  const response = await Axios.put(
+    `http://localhost:3001/api/patient/${patient.patientId}`,
+    patient,
+    {
+      headers: {
+        Authorization: `Bearer ${
+          JSON.parse(localStorage.getItem('user')).token
+        }`,
+      },
+    }
+  );
+  if (response.data.message) {
+    toast.success(response.data.message);
+  }
+  return response.data;
+};
+
+export const deletePatient = async (patientId) => {
+  const response = await Axios.delete(
+    `http://localhost:3001/api/patient/${patientId}`,
+
+    {
+      headers: {
+        Authorization: `Bearer ${
+          JSON.parse(localStorage.getItem('user')).token
+        }`,
+      },
+    }
+  );
+  if (response.data.message) {
+    toast.success(response.data.message);
+  }
   return response.data;
 };

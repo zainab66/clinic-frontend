@@ -1,5 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { AddPatient, getPatientList } from '../actions/patientAction';
+import {
+  AddPatient,
+  getPatientList,
+  editPatient,
+  deletePatient,
+} from '../actions/patientAction';
 
 const initialState = {
   patientsList: [],
@@ -11,24 +16,24 @@ const initialState = {
   isUpdate: false,
 };
 
-// Register user
+// Add patient
 export const addPtients = createAsyncThunk(
-  'patient/addPatient',
+  'patient/addPatients',
   async (
-    email,
-    firstName,
-    phoneNumber,
-    lastName,
-    age,
-    gender,
-    address,
-    description,
-    occupation,
-    firstVisit,
-    recurringvisit,
-    isPatient,
-    createdBy,
-    thunkAPI
+    {
+      email,
+      firstName,
+      phoneNumber,
+      lastName,
+      age,
+      gender,
+      city,
+      region,
+      postalCode,
+      isPatient,
+      createdBy,
+    },
+    { rejectWithValue }
   ) => {
     try {
       return await AddPatient(
@@ -38,22 +43,54 @@ export const addPtients = createAsyncThunk(
         lastName,
         age,
         gender,
-        address,
-        description,
-        occupation,
-        firstVisit,
-        recurringvisit,
+        city,
+        region,
+        postalCode,
         isPatient,
         createdBy
       );
     } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const editPatients = createAsyncThunk(
+  'patient/editPatients',
+  async (
+    {
+      patientId,
+      email,
+      firstName,
+      phoneNumber,
+      lastName,
+      age,
+      gender,
+      city,
+      region,
+      postalCode,
+      isPatient,
+      createdBy,
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      return await editPatient({
+        email,
+        firstName,
+        phoneNumber,
+        lastName,
+        age,
+        gender,
+        city,
+        region,
+        postalCode,
+        isPatient,
+        createdBy,
+        patientId,
+      });
+    } catch (error) {
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -71,6 +108,17 @@ export const getPatients = createAsyncThunk(
         error.message ||
         error.toString();
       return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const delPatient = createAsyncThunk(
+  'patient/delPatient',
+  async (patientId, { rejectWithValue }) => {
+    try {
+      return await deletePatient(patientId);
+    } catch (error) {
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -94,13 +142,12 @@ export const patientSlice = createSlice({
       .addCase(addPtients.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        //state.users = action.payload;
+        state.message = action.payload.message;
       })
       .addCase(addPtients.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-        state.message = action.error;
-        //state.users = null;
+        state.message = action.payload.message;
       })
       .addCase(getPatients.pending, (state) => {
         state.isLoading = true;
@@ -115,6 +162,35 @@ export const patientSlice = createSlice({
         state.isError = true;
         state.message = action.error;
         state.patientsList = null;
+      })
+
+      .addCase(editPatients.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(editPatients.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload.message;
+      })
+      .addCase(editPatients.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.error;
+        state.message = null;
+      })
+      .addCase(delPatient.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(delPatient.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload.message;
+      })
+      .addCase(delPatient.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.error;
+        state.message = null;
       });
   },
 });

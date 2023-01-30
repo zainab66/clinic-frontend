@@ -26,7 +26,7 @@ const PrivateRoute = (props) => {
       props.role === user.role ? (
         <Outlet />
       ) : (
-        <Navigate to="/denied" />
+        <Navigate to="/assistance/dashboard" />
       )
     ) : (
       <Navigate to="/login" />

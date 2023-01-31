@@ -538,16 +538,17 @@ export default function PatientsList() {
           </div>
         </>
       ) : null}
-
-      <DataTable
-        title="Movie List"
-        columns={columns}
-        data={patientsList}
-        customStyles={customStyles}
-        pagination
-        selectableRows
-        dense
-      />
+      {patientsList && (
+        <DataTable
+          title="Movie List"
+          columns={columns}
+          data={patientsList}
+          customStyles={customStyles}
+          pagination
+          selectableRows
+          dense
+        />
+      )}
     </>
   );
 }

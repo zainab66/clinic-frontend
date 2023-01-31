@@ -10,6 +10,7 @@ import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { patientSchema } from '../schema/formSchema';
+import { MdOutlineCancel } from 'react-icons/md';
 
 export default function PatientsList() {
   const { patientsList } = useSelector((state) => state.patient);
@@ -25,6 +26,8 @@ export default function PatientsList() {
   const [postalCode, setPostalCode] = useState('');
   const [isPatient, setIsPatient] = useState(true);
   const [patientId, setPatientId] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [nameTODelete, setNameTODelete] = useState(false);
 
   const { user } = useSelector((state) => state.auth);
   const createdBy = user._id;
@@ -65,16 +68,20 @@ export default function PatientsList() {
     },
   };
 
-  const handleCancel = async (e) => {
-    e.preventDefault();
+  const handleCancel = async () => {
     setShowModal(false);
     reset();
   };
-
+  const handleDeleteCancel = async () => {
+    setShowDeleteModal(false);
+  };
   const handleDelete = async (id) => {
     dispatch(delPatient(id));
+    setShowDeleteModal(false);
   };
-
+  const handleDeleteInfo = async (row) => {
+    setNameTODelete(row.firstName);
+  };
   const handleEdit = async (value) => {
     setFirstName(value.firstName);
     setLastName(value.lastName);
@@ -194,7 +201,10 @@ export default function PatientsList() {
           </button>
 
           <button
-            onClick={(e) => handleDelete(row._id)}
+            onClick={() => {
+              setShowDeleteModal(true);
+              handleDeleteInfo(row);
+            }}
             type="button"
             style={{ background: 'red', borderRadius: '50%' }}
             className="text-sm text-white p-1 hover:drop-shadow-xl hover:bg-light-gray"
@@ -473,6 +483,55 @@ export default function PatientsList() {
                       </div>
                     </div>
                   </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      ) : null}
+
+      {showDeleteModal ? (
+        <>
+          <div className="flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+            <div className="relative w-auto my-6 mx-auto max-w-3xl -mt-10">
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-gray-50 outline-none focus:outline-none">
+                <div className="flex items-start justify-end p-4 solid border-gray-50 rounded-t ">
+                  {/* <h3 className="text-lg font-semibold">
+                    Invite new assistant
+                  </h3> */}
+
+                  <button
+                    type="button"
+                    onClick={() => setShowDeleteModal(false)}
+                    style={{ color: 'black' }}
+                    className="text-xl rounded-full pt-1 hover:bg-light-gray  block "
+                  >
+                    <MdOutlineCancel />
+                  </button>
+                </div>
+                <div className="relative p-6 flex-auto">
+                  <form className=" px-8 pt-6 pb-8 w-full">
+                    <div>
+                      Are you sure you want to delete patient {nameTODelete}?
+                    </div>
+                  </form>
+                </div>
+                <div className="flex items-center justify-between p-3 border-t border-solid border-blueGray-200 rounded-b">
+                  <button
+                    className="text-white  bg-red-500 active:bg-red-700 font-semibold  px-4 py-2 text-sm rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+                    type="button"
+                    onClick={handleDeleteCancel}
+                  >
+                    Close
+                  </button>
+                  <button
+                    style={{ backgroundColor: 'blue' }}
+                    className="text-white font-semibold  text-sm px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+                    type="submit"
+                    onClick={handleDelete}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             </div>

@@ -1,5 +1,7 @@
 import Axios from 'axios';
 import { toast } from 'react-toastify';
+const baseURL = 'https://xi-team-api.onrender.com/api';
+// || 'http://localhost:3001/api';
 
 // Add Patient
 export const AddPatient = async (
@@ -15,22 +17,19 @@ export const AddPatient = async (
   isPatient,
   createdBy
 ) => {
-  const response = await Axios.post(
-    'http://localhost:3001/api/patient/addPatient',
-    {
-      email,
-      firstName,
-      phoneNumber,
-      lastName,
-      age,
-      gender,
-      city,
-      region,
-      postalCode,
-      isPatient,
-      createdBy,
-    }
-  );
+  const response = await Axios.post(`${baseURL}/patient/addPatient`, {
+    email,
+    firstName,
+    phoneNumber,
+    lastName,
+    age,
+    gender,
+    city,
+    region,
+    postalCode,
+    isPatient,
+    createdBy,
+  });
   if (response.data.message === 'Patient create successfully') {
     toast.success('Patient create successfully');
   } else {
@@ -40,22 +39,17 @@ export const AddPatient = async (
 };
 
 export const getPatientList = async () => {
-  const response = await Axios.get(
-    'http://localhost:3001/api/patient/getPatient',
-    {
-      headers: {
-        Authorization: `Bearer ${
-          JSON.parse(localStorage.getItem('user')).token
-        }`,
-      },
-    }
-  );
+  const response = await Axios.get(`${baseURL}/patient/getPatient`, {
+    headers: {
+      Authorization: `Bearer ${JSON.parse(localStorage.getItem('user')).token}`,
+    },
+  });
   return response.data.patients;
 };
 
 export const editPatient = async (patient) => {
   const response = await Axios.put(
-    `http://localhost:3001/api/patient/${patient.patientId}`,
+    `${baseURL}/patient/${patient.patientId}`,
     patient,
     {
       headers: {
@@ -73,7 +67,7 @@ export const editPatient = async (patient) => {
 
 export const deletePatient = async (patientId) => {
   const response = await Axios.delete(
-    `http://localhost:3001/api/patient/${patientId}`,
+    `${baseURL}/patient/${patientId}`,
 
     {
       headers: {

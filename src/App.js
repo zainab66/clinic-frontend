@@ -18,9 +18,11 @@ import Editor from './screens/Editor';
 import ColorPicker from './screens/ColorPicker';
 import { ToastContainer } from 'react-toastify';
 import ActivateUser from './screens/ActivateUser';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { getPatients, deleteUser, updateUser } from './reducers/patientSlice';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { getPatients } from './reducers/patientSlice';
+import ForgetPassword from './screens/ForgetPassword';
+import ResetPassword from './screens/ResetPassword';
 
 function App() {
   const dispatch = useDispatch();
@@ -54,6 +56,9 @@ function App() {
           <Route path="/activate/:token" element={<ActivateUser />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgetPassword" element={<ForgetPassword />} />
+          <Route path="/resetpassword/:token" element={<ResetPassword />} />
+
           <Route
             path="/assistance/dashboard"
             element={<PrivateRoute role="Assistant" />}

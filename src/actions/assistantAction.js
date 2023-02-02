@@ -10,6 +10,13 @@ export const addUser = async (email, fullName, role, createdBy) => {
       fullName,
       role,
       createdBy,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${
+          JSON.parse(localStorage.getItem('user')).token
+        }`,
+      },
     }
   );
   if (response.data.message === 'Invitation send successfully') {

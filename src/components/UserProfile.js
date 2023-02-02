@@ -1,6 +1,6 @@
 import React from 'react';
 import { MdOutlineCancel } from 'react-icons/md';
-import { logout, reset } from '../reducers/authSlice';
+import { logout, resetReducer } from '../reducers/authSlice';
 import Button from '../components/Button';
 import { userProfileData } from '../data/dummy';
 import { useStateContext } from '../contexts/ContextProvider';
@@ -15,7 +15,7 @@ export default function UserProfile() {
   const handleLogout = () => {
     console.log('llll');
     dispatch(logout());
-    dispatch(reset());
+    dispatch(resetReducer());
     navigate('/');
   };
   return (

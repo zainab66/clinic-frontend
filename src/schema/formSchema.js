@@ -14,9 +14,9 @@ export const inviteSchema = yup.object().shape({
 
 export const patientSchema = yup.object().shape({
   email: yup
-    .string('email should be a string')
-    .email('please provide a valid email address')
-    .required('email address is required'),
+    .string('Email should be a string')
+    .email('Please provide a valid email address')
+    .required('Email address is required'),
   firstName: yup
     .string('Full Name should be a string')
     .min(3, 'Full Name should have a minimum length of 3')
@@ -47,4 +47,51 @@ export const patientSchema = yup.object().shape({
   postalCode: yup
     .string('Postal Code should be a string')
     .required('Postal Code is required'),
+});
+
+export const userSchema = yup.object().shape({
+  email: yup
+    .string('Email should be a string')
+    .email('Please provide a valid email address')
+    .required('Email address is required'),
+  password: yup
+    .string()
+    .required('Password is required')
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+      'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character'
+    ),
+});
+
+export const forgetPasswordSchema = yup.object().shape({
+  email: yup
+    .string('email should be a string')
+    .email('please provide a valid email address')
+    .required('email address is required'),
+});
+export const resetPasswordSchema = yup.object().shape({
+  password: yup
+    .string()
+    .required('Password is required')
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+      'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character'
+    ),
+});
+export const signupSchema = yup.object().shape({
+  email: yup
+    .string('Email should be a string')
+    .email('Please provide a valid email address')
+    .required('Email address is required'),
+  password: yup
+    .string()
+    .required('Password is required')
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+      'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character'
+    ),
+  userName: yup
+    .string(' Name should be a string')
+    .min(3, ' Name should have a minimum length of 3')
+    .required(' Name is required'),
 });

@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { logout, reset } from '../reducers/authSlice';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useStateContext } from '../contexts/ContextProvider';
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import { logout, resetReducer } from '../reducers/authSlice';
+import { useNavigate } from 'react-router-dom';
 
 import { Fragment } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
@@ -22,14 +21,12 @@ function classNames(...classes) {
 }
 
 export default function AssistanceDashboard() {
-  const { currentColor } = useStateContext();
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     dispatch(logout());
-    dispatch(reset());
+    dispatch(resetReducer());
     navigate('/');
   };
 

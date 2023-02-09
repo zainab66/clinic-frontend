@@ -519,6 +519,7 @@ export const links = [
       {
         name: 'dashboard',
         icon: <AiOutlineHome />,
+        to: 'dashboard',
       },
     ],
   },

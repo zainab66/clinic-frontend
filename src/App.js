@@ -5,7 +5,6 @@ import Login from './screens/Signin';
 import Dashboard from './screens/Dashboard';
 import PrivateRoute from './routes/PrivateRoute';
 import Main from './screens/Main';
-import AddAssistant from './screens/AddAssistant';
 import AssistanceDashboard from './screens/AssistanceDashboard';
 import Home from './screens/Home';
 import Appointments from './screens/Appointments';
@@ -39,12 +38,11 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<PrivateRoute role="admin" />}>
-            <Route path="" element={<Dashboard />}>
+            <Route path="/dashboard" element={<Dashboard />}>
               <Route path="" element={<Main />} />
               <Route path="appointments" element={<Appointments />} />
               <Route path="assistants" element={<Assistants />} />
               <Route path="patients" element={<Patients />} />
-              <Route path="add/assistant" element={<AddAssistant />} />
               <Route path="add/patient" element={<AddNewPatient />} />
               <Route path="add/patient" element={<AddNewPatient />} />
               <Route path="calender" element={<Calender />} />

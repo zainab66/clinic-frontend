@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  resetReducerPatients,
   getPatients,
   delPatient,
   editPatients,
@@ -11,9 +12,19 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { patientSchema } from '../schema/formSchema';
 import { MdOutlineCancel } from 'react-icons/md';
+import { toast } from 'react-toastify';
+import { useStateContext } from '../contexts/ContextProvider';
 
 export default function PatientsList() {
-  const { patientsList } = useSelector((state) => state.patient);
+  const {
+    patientsList,
+    messageEditPatients,
+    isErrorEditPatients,
+    isSuccessEditPatients,
+    messageDelPatient,
+    isSuccessDelPatient,
+    isErrorDelPatient,
+  } = useSelector((state) => state.patient);
   const [showModal, setShowModal] = useState(false);
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -24,16 +35,15 @@ export default function PatientsList() {
   const [gender, setGender] = useState('');
   const [region, setRegion] = useState('');
   const [postalCode, setPostalCode] = useState('');
-  const [isPatient, setIsPatient] = useState(true);
+  const [isPatient, setIsPatient] = useState('patient');
   const [patientId, setPatientId] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [nameTODelete, setNameTODelete] = useState(false);
+  const { currentColor } = useStateContext();
 
   const { user } = useSelector((state) => state.auth);
   const createdBy = user._id;
   const dispatch = useDispatch();
-
-  const reload = () => window.location.reload();
 
   useEffect(() => {
     dispatch(getPatients());
@@ -47,23 +57,23 @@ export default function PatientsList() {
     },
     headRow: {
       style: {
-        borderTopStyle: 'solid',
-        borderTopWidth: '1px',
+        // borderTopStyle: 'solid',
+        // borderTopWidth: '1px',
       },
     },
     headCells: {
       style: {
-        borderRightStyle: 'solid',
-        borderRightWidth: '1px',
+        // borderRightStyle: 'solid',
+        // borderRightWidth: '1px',
         color: 'black',
         fontSize: '14px',
       },
     },
     cells: {
       style: {
-        borderRightStyle: 'solid',
-        borderRightWidth: '1px',
-        width: '150px',
+        // borderRightStyle: 'solid',
+        // borderRightWidth: '1px',
+        width: '180px',
       },
     },
   };
@@ -75,12 +85,12 @@ export default function PatientsList() {
   const handleDeleteCancel = async () => {
     setShowDeleteModal(false);
   };
-  const handleDelete = async (id) => {
-    dispatch(delPatient(id));
-    setShowDeleteModal(false);
+  const handleDelete = () => {
+    dispatch(delPatient(patientId));
   };
   const handleDeleteInfo = async (row) => {
     setNameTODelete(row.firstName);
+    setPatientId(row._id);
   };
   const handleEdit = async (value) => {
     setFirstName(value.firstName);
@@ -141,10 +151,53 @@ export default function PatientsList() {
         patientId,
       })
     );
-    setShowModal(false);
-    reset();
-    reload();
   };
+
+  useEffect(() => {
+    if (isErrorEditPatients) {
+      toast.error(messageEditPatients);
+      setShowModal(true);
+    }
+
+    if (isSuccessEditPatients) {
+      toast.success(messageEditPatients);
+      setShowModal(false);
+      reset();
+    }
+    if (messageEditPatients) {
+      dispatch(getPatients());
+    }
+    dispatch(resetReducerPatients());
+  }, [
+    reset,
+    isErrorEditPatients,
+    isSuccessEditPatients,
+    dispatch,
+    messageEditPatients,
+  ]);
+
+  useEffect(() => {
+    if (isErrorDelPatient) {
+      toast.error(messageDelPatient);
+      setShowDeleteModal(true);
+    }
+
+    if (isSuccessDelPatient) {
+      toast.success(messageDelPatient);
+      setShowDeleteModal(false);
+      reset();
+    }
+    if (messageDelPatient) {
+      dispatch(getPatients());
+    }
+    dispatch(resetReducerPatients());
+  }, [
+    reset,
+    isErrorDelPatient,
+    isSuccessDelPatient,
+    dispatch,
+    messageDelPatient,
+  ]);
 
   const columns = [
     {
@@ -194,7 +247,7 @@ export default function PatientsList() {
               handleEdit(row);
             }}
             type="button"
-            style={{ background: 'blue', borderRadius: '50%' }}
+            style={{ background: currentColor, borderRadius: '50%' }}
             className="text-sm text-white p-1 hover:drop-shadow-xl hover:bg-light-gray mr-1"
           >
             <AiOutlineEdit size="1rem" />
@@ -469,14 +522,16 @@ export default function PatientsList() {
                         </button>
 
                         <button
+                          style={{
+                            backgroundColor: !check
+                              ? currentColor
+                              : currentColor,
+                            opacity: !check ? '' : 0.25,
+                          }}
                           disabled={check}
                           type="submit"
-                          className={`inline-flex justify-center rounded-md border border-transparent py-2 px-4 text-sm font-medium text-white shadow-sm ${
-                            !check
-                              ? 'bg-blue-700  hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2  hover:shadow-lg'
-                              : 'bg-blue-200 '
-                          }
-                          `}
+                          className="inline-flex justify-center rounded-md border border-transparent py-2 px-4 text-sm font-medium
+                            text-white shadow-sm"
                         >
                           Save
                         </button>
@@ -525,7 +580,7 @@ export default function PatientsList() {
                     Close
                   </button>
                   <button
-                    style={{ backgroundColor: 'blue' }}
+                    style={{ backgroundColor: currentColor }}
                     className="text-white font-semibold  text-sm px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
                     type="submit"
                     onClick={handleDelete}
@@ -540,7 +595,7 @@ export default function PatientsList() {
       ) : null}
       {patientsList && (
         <DataTable
-          title="Movie List"
+          title="Patients List"
           columns={columns}
           data={patientsList}
           customStyles={customStyles}

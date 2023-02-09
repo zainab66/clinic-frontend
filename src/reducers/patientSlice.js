@@ -127,11 +127,20 @@ export const patientSlice = createSlice({
   name: 'patients',
   initialState,
   reducers: {
-    reset: (state) => {
+    resetReducerPatients: (state) => {
       state.isLoading = false;
       state.isSuccess = false;
       state.isError = false;
       state.message = '';
+      state.messageEditPatients = '';
+      state.isErrorEditPatients = false;
+      state.isSuccessEditPatients = false;
+      state.messageAddPtients = '';
+      state.isErrorAddPtients = false;
+      state.isSuccessAddPtients = false;
+      state.messageDelPatient = '';
+      state.isSuccessDelPatient = false;
+      state.isErrorDelPatient = false;
     },
   },
   extraReducers: (builder) => {
@@ -140,14 +149,14 @@ export const patientSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(addPtients.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.message = action.payload.message;
+        state.isLoadingAddPtients = false;
+        state.isSuccessAddPtients = true;
+        state.messageAddPtients = action.payload.message;
       })
       .addCase(addPtients.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.message = action.payload.message;
+        state.isLoadingAddPtients = false;
+        state.isErrorAddPtients = true;
+        state.messageAddPtients = action.payload.message;
       })
       .addCase(getPatients.pending, (state) => {
         state.isLoading = true;
@@ -160,7 +169,7 @@ export const patientSlice = createSlice({
       .addCase(getPatients.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-        state.message = action.error;
+        state.message = action.payload.message;
         state.patientsList = null;
       })
 
@@ -168,32 +177,30 @@ export const patientSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(editPatients.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.message = action.payload.message;
+        state.isLoadingEditPatients = false;
+        state.isSuccessEditPatients = true;
+        state.messageEditPatients = action.payload.message;
       })
       .addCase(editPatients.rejected, (state, action) => {
         state.isLoading = false;
-        state.isError = true;
-        state.message = action.error;
-        state.message = null;
+        state.isErrorEditPatients = true;
+        state.messageEditPatients = action.payload.message;
       })
       .addCase(delPatient.pending, (state) => {
-        state.isLoading = true;
+        state.isLoadingDelPatient = true;
       })
       .addCase(delPatient.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.message = action.payload.message;
+        state.isLoadingDelPatient = false;
+        state.isSuccessDelPatient = true;
+        state.messageDelPatient = action.payload.message;
       })
       .addCase(delPatient.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.message = action.error;
-        state.message = null;
+        state.isLoadingDelPatient = false;
+        state.isErrorDelPatient = true;
+        state.messageDelPatient = action.payload.message;
       });
   },
 });
 
-export const { reset } = patientSlice.actions;
+export const { resetReducerPatients } = patientSlice.actions;
 export default patientSlice.reducer;

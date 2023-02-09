@@ -1,6 +1,6 @@
 import Axios from 'axios';
-import { toast } from 'react-toastify';
-const baseURL = 'https://xi-team-api.onrender.com/api';
+const baseURL = 'http://localhost:3001/api';
+//'https://xi-team-api.onrender.com/api';
 // || 'http://localhost:3001/api';
 
 // Add Patient
@@ -17,24 +17,29 @@ export const AddPatient = async (
   isPatient,
   createdBy
 ) => {
-  const response = await Axios.post(`${baseURL}/patient/addPatient`, {
-    email,
-    firstName,
-    phoneNumber,
-    lastName,
-    age,
-    gender,
-    city,
-    region,
-    postalCode,
-    isPatient,
-    createdBy,
-  });
-  if (response.data.message === 'Patient create successfully') {
-    toast.success('Patient create successfully');
-  } else {
-    toast.error(response.data.message);
-  }
+  const response = await Axios.post(
+    `${baseURL}/patient/addPatient`,
+    {
+      email,
+      firstName,
+      phoneNumber,
+      lastName,
+      age,
+      gender,
+      city,
+      region,
+      postalCode,
+      isPatient,
+      createdBy,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${
+          JSON.parse(localStorage.getItem('user')).token
+        }`,
+      },
+    }
+  );
   return response.data;
 };
 
@@ -59,9 +64,6 @@ export const editPatient = async (patient) => {
       },
     }
   );
-  if (response.data.message) {
-    toast.success(response.data.message);
-  }
   return response.data;
 };
 
@@ -77,8 +79,5 @@ export const deletePatient = async (patientId) => {
       },
     }
   );
-  if (response.data.message) {
-    toast.success(response.data.message);
-  }
   return response.data;
 };

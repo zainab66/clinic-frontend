@@ -22,6 +22,7 @@ import { useDispatch } from 'react-redux';
 import { getPatients } from './reducers/patientSlice';
 import ForgetPassword from './screens/ForgetPassword';
 import ResetPassword from './screens/ResetPassword';
+import Profile from './screens/Profile';
 
 function App() {
   const dispatch = useDispatch();
@@ -32,7 +33,7 @@ function App() {
 
   return (
     <div>
-      <ToastContainer />
+      {/* <ToastContainer /> */}
 
       <BrowserRouter>
         <Routes>
@@ -49,6 +50,7 @@ function App() {
               <Route path="tasks" element={<Tasks />} />
               <Route path="editor" element={<Editor />} />
               <Route path="colorPicker" element={<ColorPicker />} />
+              <Route path="profile" element={<Profile />} />
             </Route>
           </Route>
           <Route path="/activate/:token" element={<ActivateUser />} />

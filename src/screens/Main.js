@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BiFirstAid } from 'react-icons/bi';
 import { GoPrimitiveDot } from 'react-icons/go';
 import { IoIosMore } from 'react-icons/io';
@@ -13,9 +13,10 @@ import { TbDisabled } from 'react-icons/tb';
 import { MdOutlineBloodtype } from 'react-icons/md';
 import { BsCurrencyDollar } from 'react-icons/bs';
 import { FaUserMd } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
-  earningData,
+  // earningData,
   medicalproBranding,
   recentTransactions,
   weeklyStats,
@@ -25,7 +26,20 @@ import {
 } from '../data/dummy';
 import { useStateContext } from '../contexts/ContextProvider';
 import product9 from '../data/product9.jpg';
-
+import {
+  resetReducerPatients,
+  getPatients,
+  delPatient,
+  editPatients,
+} from '../reducers/patientSlice';
+import {
+  editAppointments,
+  delAppointment,
+  getAppointments,
+  addNewAppointment,
+  getPatientsByName,
+  resetReducerAppointment,
+} from '../reducers/appointmentSlice';
 const DropDown = ({ currentMode }) => (
   <div className="w-28 border-1 border-color px-2 py-1 rounded-md">
     <DropDownListComponent
@@ -42,6 +56,78 @@ const DropDown = ({ currentMode }) => (
 
 export default function Main() {
   const { currentColor, currentMode } = useStateContext();
+  const dispatch = useDispatch();
+  const {
+    patientsListByName,
+    appointmentList,
+    messageAddNewAppointment,
+    isSuccessAddNewAppointment,
+    isErrorAddNewAppointment,
+    messageDelAppointment,
+    isSuccessDelAppointment,
+    isErrorDelAppointment,
+    isErrorEditAppointment,
+    isSuccessEditAppointment,
+    messageEditAppointment,
+  } = useSelector((state) => state.appointment);
+  const {
+    patientsList,
+    messageEditPatients,
+    isErrorEditPatients,
+    isSuccessEditPatients,
+    messageDelPatient,
+    isSuccessDelPatient,
+    isErrorDelPatient,
+  } = useSelector((state) => state.patient);
+
+  const patientNumber = patientsList.length;
+  const appointmentNumber = appointmentList.length;
+
+  console.log(patientNumber);
+  useEffect(() => {
+    dispatch(getPatients());
+    dispatch(getAppointments());
+  }, [dispatch]);
+
+  const earningData = [
+    {
+      icon: <BiFirstAid />,
+      amount: appointmentNumber,
+      // percentage: '-4%',
+      title: 'Appointments',
+      iconColor: '#fff',
+      iconBg: currentColor,
+      pcColor: 'red-600',
+    },
+    {
+      icon: <MdOutlineBloodtype />,
+      amount: '4,396',
+      // percentage: '+23%',
+      title: 'Operations',
+      iconColor: '#fff',
+      iconBg: currentColor,
+      pcColor: 'green-600',
+    },
+    {
+      icon: <BsCurrencyDollar />,
+      amount: '423,39',
+      // percentage: '+38%',
+      title: 'Earning',
+      iconColor: ' #fff',
+      iconBg: currentColor,
+
+      pcColor: 'green-600',
+    },
+    {
+      icon: <BsCurrencyDollar />,
+      amount: '39,354',
+      percentage: '-12%',
+      title: 'Refunds',
+      iconColor: ' #fff',
+      iconBg: currentColor,
+      pcColor: 'red-600',
+    },
+  ];
 
   return (
     <div className="mt-24">
@@ -50,14 +136,14 @@ export default function Main() {
           <div className="flex justify-between items-center">
             <div>
               <p className="font-bold text-gray-400">Patients</p>
-              <p className="text-2xl">$63,448.78</p>
+              <p className="text-2xl">{patientNumber}</p>
             </div>
             <button
               type="button"
               style={{ backgroundColor: currentColor }}
               className="text-2xl opacity-0.9 text-white hover:drop-shadow-xl rounded-full  p-4"
             >
-              <BsCurrencyDollar />
+              <TbDisabled />
             </button>
           </div>
           <div className="mt-6">
@@ -73,7 +159,7 @@ export default function Main() {
           {earningData.map((item) => (
             <div
               key={item.title}
-              className="bg-white h-44 dark:text-gray-200 dark:bg-secondary-dark-bg md:w-56  p-4 pt-9 rounded-2xl "
+              className="bg-white h-44 dark:text-gray-200 dark:bg-secondary-dark-bg md:w-56  p-4 pt-9 rounded-2xl shadow"
             >
               <button
                 type="button"

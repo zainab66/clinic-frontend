@@ -26,7 +26,7 @@ import {
   BsShield,
   BsChatLeft,
 } from 'react-icons/bs';
-import { BiColorFill } from 'react-icons/bi';
+import { BiColorFill, BiFirstAid } from 'react-icons/bi';
 import { IoMdContacts } from 'react-icons/io';
 import { RiContactsLine, RiStockLine, RiThermometerLine } from 'react-icons/ri';
 import { MdOutlineSupervisorAccount } from 'react-icons/md';
@@ -659,10 +659,10 @@ export const chatData = [
 
 export const earningData = [
   {
-    icon: <MdOutlineSupervisorAccount />,
+    icon: <BiFirstAid />,
     amount: '39,354',
     percentage: '-4%',
-    title: 'Customers',
+    title: 'Appointments',
     iconColor: '#03C9D7',
     iconBg: '#E5FAFB',
     pcColor: 'red-600',

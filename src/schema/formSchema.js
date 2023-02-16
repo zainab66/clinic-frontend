@@ -7,7 +7,7 @@ export const inviteSchema = yup.object().shape({
     .required('email address is required'),
   fullName: yup
     .string('FullName should be a string')
-    .min(3, 'FullName should have a minimum length of 5')
+    .min(3, 'FullName should have a minimum length of 3')
     // .max(12, 'FullName should have a maximum length of 12')
     .required('FullName is required'),
 });
@@ -127,4 +127,17 @@ export const AssisstanceSchema = yup.object().shape({
   postalCode: yup
     .string('Postal Code should be a string')
     .required('Postal Code is required'),
+});
+
+export const profileSchema = yup.object().shape({
+  email: yup
+    .string('Email should be a string')
+    .email('Please provide a valid email address')
+    .required('Email address is required'),
+  name: yup
+    .string(' Name should be a string')
+    .min(3, ' Name should have a minimum length of 3')
+    // .max(12, 'FullName should have a maximum length of 12')
+    .required(' Name is required'),
+  image: yup.mixed().required('An image is required'),
 });

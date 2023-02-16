@@ -5,6 +5,8 @@ import { BsChatLeft } from 'react-icons/bs';
 import { RiNotification3Line } from 'react-icons/ri';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout, resetReducer, getUserProfile } from '../reducers/authSlice';
 
 import avatar from '../data/avatar.jpg';
 import { useStateContext } from '../contexts/ContextProvider';
@@ -31,6 +33,9 @@ const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
 );
 
 export default function Navbar() {
+  const { user, userProfile } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
   const {
     currentColor,
     activeMenu,
@@ -60,6 +65,10 @@ export default function Navbar() {
   }, [screenSize, setActiveMenu]);
 
   const handleActiveMenu = () => setActiveMenu(!activeMenu);
+
+  useEffect(() => {
+    dispatch(getUserProfile(user._id));
+  }, [dispatch, user]);
 
   return (
     <div className="flex justify-between p-2 md:ml-6 md:mr-6 relative">
@@ -97,13 +106,13 @@ export default function Navbar() {
           >
             <img
               className="rounded-full w-8 h-8"
-              src={avatar}
+              src={`https://xi-bucket.s3.ca-central-1.amazonaws.com/${userProfile.image}`}
               alt="user-profile"
             />
             <p>
               <span className="text-gray-400 text-14">Hi,</span>{' '}
               <span className="text-gray-400 font-bold ml-1 text-14">
-                Michael
+                {userProfile.name}
               </span>
             </p>
             <MdKeyboardArrowDown className="text-gray-400 text-14" />

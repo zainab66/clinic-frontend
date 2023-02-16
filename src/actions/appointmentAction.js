@@ -1,7 +1,6 @@
 import Axios from 'axios';
-const baseURL =
-  //'http://localhost:3001/api';
-  'https://xi-team-api.onrender.com/api';
+const baseURL = 'http://localhost:3001/api';
+//'https://xi-team-api.onrender.com/api';
 // || 'http://localhost:3001/api';
 
 export const getPatientByName = async (patientName) => {
@@ -81,6 +80,21 @@ export const deleteAppointment = async (patientId) => {
   const response = await Axios.delete(
     `${baseURL}/appointment/${patientId}`,
 
+    {
+      headers: {
+        Authorization: `Bearer ${
+          JSON.parse(localStorage.getItem('user')).token
+        }`,
+      },
+    }
+  );
+  return response.data;
+};
+
+export const editAppointment = async (appointment) => {
+  const response = await Axios.put(
+    `${baseURL}/appointment/${appointment.patientId}`,
+    appointment,
     {
       headers: {
         Authorization: `Bearer ${

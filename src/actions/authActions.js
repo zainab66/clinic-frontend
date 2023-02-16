@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import { toast } from 'react-toastify';
 
-const baseURL = 'https://xi-team-api.onrender.com/api';
+const baseURL = 'http://localhost:3001/api';
 // 'https://xi-team-api.onrender.com/api';
 // || 'http://localhost:3001/api';
 
@@ -51,5 +51,17 @@ export const resetPasswordUser = async (token, password) => {
     token,
     password,
   });
+  return response.data;
+};
+
+export const editUser = async (formData) => {
+  const response = await Axios.put(`${baseURL}/doctor/editUser`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+};
+
+export const getUser = async (id) => {
+  const response = await Axios.get(`${baseURL}/doctor/getUser/${id}`);
   return response.data;
 };

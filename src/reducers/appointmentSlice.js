@@ -4,6 +4,7 @@ import {
   getPatientByName,
   addAppointment,
   getAppointmentList,
+  editAppointment,
 } from '../actions/appointmentAction';
 
 const initialState = {
@@ -19,6 +20,9 @@ const initialState = {
   isErrorDelAppointment: false,
   isSuccessDelAppointment: false,
   messageDelAppointment: '',
+  isErrorEditAppointment: false,
+  isSuccessEditAppointment: false,
+  messageEditAppointment: '',
 };
 
 export const getPatientsByName = createAsyncThunk(
@@ -102,6 +106,26 @@ export const delAppointment = createAsyncThunk(
   }
 );
 
+export const editAppointments = createAsyncThunk(
+  'appointment/editAppointments',
+  async (
+    { patientId, createdBy, appointmentStatus, visitDate, visitTime },
+    { rejectWithValue }
+  ) => {
+    try {
+      return await editAppointment({
+        patientId,
+        createdBy,
+        appointmentStatus,
+        visitDate,
+        visitTime,
+      });
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const appointmentSlice = createSlice({
   name: 'appointment',
   initialState,
@@ -111,13 +135,16 @@ export const appointmentSlice = createSlice({
       state.isSuccessPatientsListByName = false;
       state.isErrorPatientsListByName = false;
       state.messagePatientsListByName = '';
-      state.patientsListByName = [];
+      state.patientsListByName = null;
       state.isErrorAddNewAppointment = false;
       state.isSuccessAddNewAppointment = false;
       state.messageAddNewAppointment = '';
       state.messageDelAppointment = '';
       state.isSuccessDelAppointment = false;
       state.isErrorDelAppointment = false;
+      state.messageEditAppointment = '';
+      state.isErrorEditAppointment = false;
+      state.isSuccessEditAppointment = false;
     },
   },
   extraReducers: (builder) => {
@@ -165,6 +192,19 @@ export const appointmentSlice = createSlice({
         state.isErrorGetAppointments = true;
         state.messageGetAppointments = action.payload;
         state.appointmentList = null;
+      })
+      .addCase(editAppointments.pending, (state) => {
+        state.isLoadingEditAppointment = true;
+      })
+      .addCase(editAppointments.fulfilled, (state, action) => {
+        state.isLoadingEditAppointment = false;
+        state.isSuccessEditAppointment = true;
+        state.messageEditAppointment = action.payload.message;
+      })
+      .addCase(editAppointments.rejected, (state, action) => {
+        state.isLoadingEditAppointment = false;
+        state.isErrorEditAppointment = true;
+        state.messageEditAppointment = action.payload.message;
       })
       .addCase(delAppointment.pending, (state) => {
         state.isLoadingAddNewAppointment = true;

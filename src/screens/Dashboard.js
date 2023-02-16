@@ -6,6 +6,7 @@ import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import { useStateContext } from '../contexts/ContextProvider';
 import ThemeSettings from '../components/ThemeSettings';
+import { ToastContainer } from 'react-toastify';
 
 export default function Dashboard() {
   const {
@@ -63,6 +64,7 @@ export default function Dashboard() {
           >
             <div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full ">
               <Navbar />
+              <ToastContainer />
             </div>
             {themeSettings && <ThemeSettings />} <Outlet />
           </div>

@@ -9,3 +9,7 @@ body {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+input::file-selector-button {
+  border-radius: 10px;
+}

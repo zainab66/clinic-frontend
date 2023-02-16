@@ -6,6 +6,7 @@ import DataTable from 'react-data-table-component';
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  editAppointments,
   delAppointment,
   getAppointments,
   addNewAppointment,
@@ -15,8 +16,9 @@ import {
 import DatePicker from 'react-datepicker';
 import { toast } from 'react-toastify';
 import { MdOutlineCancel } from 'react-icons/md';
-
+import Select from 'react-tailwindcss-select';
 import 'react-datepicker/dist/react-datepicker.css';
+
 export default function Appointments() {
   const formatDate = (date) => {
     if (date) {
@@ -33,6 +35,7 @@ export default function Appointments() {
   const [visitTime, setVisitTime] = useState(new Date());
   const [dateChanged, setDateChanged] = useState(false);
   const [timeChanged, setTimeChanged] = useState(false);
+  const [statusChanged, setStatusChanged] = useState(false);
 
   // const date = visitTime;
   // const showTime = date.getHours() + ':' + date.getMinutes();
@@ -47,8 +50,9 @@ export default function Appointments() {
     var strTime = hours + ':' + minutes + ' ' + ampm;
     return strTime;
   };
+  const [showEditModal, setShowEditModal] = useState(false);
 
-  const [appointmentStatus, setAppointmentStatus] = useState('Reserve');
+  const [appointmentStatus, setAppointmentStatus] = useState(null);
   const { currentColor } = useStateContext();
   const [showModal, setShowModal] = useState(false);
   const [showModalAppointment, setShowModalAppointment] = useState(false);
@@ -62,7 +66,13 @@ export default function Appointments() {
     messageDelAppointment,
     isSuccessDelAppointment,
     isErrorDelAppointment,
+    isErrorEditAppointment,
+    isSuccessEditAppointment,
+    messageEditAppointment,
   } = useSelector((state) => state.appointment);
+
+  const check = selectedRows === undefined || selectedRows.length === 0;
+  console.log(check, 'p', selectedRows);
 
   const dispatch = useDispatch();
 
@@ -89,6 +99,21 @@ export default function Appointments() {
 
   const { user } = useSelector((state) => state.auth);
   const createdBy = user._id;
+
+  const handleEdit = async (value) => {
+    // setAppointmentStatus(value.appointmentStatus);
+    // setVisitDate(value.visitDate);
+    // setFirstName(value.firstName);
+    // setLastName(value.lastName);
+    // setEmail(value.email);
+    // setPhoneNumber(value.phoneNumber);
+    // setGender(value.gender);
+    // setAge(value.age);
+    // setCity(value.city);
+    // setRegion(value.region);
+    // setPostalCode(value.postalCode);
+    setPatientId(value.patientId);
+  };
 
   useEffect(() => {
     dispatch(getPatientsByName());
@@ -149,10 +174,10 @@ export default function Appointments() {
       cell: (row) => (
         <>
           <button
-            // onClick={() => {
-            //   setShowModal(true);
-            //   handleEdit(row);
-            // }}
+            onClick={() => {
+              setShowEditModal(true);
+              handleEdit(row);
+            }}
             type="button"
             style={{ background: currentColor, borderRadius: '50%' }}
             className="text-sm text-white p-1 hover:drop-shadow-xl hover:bg-light-gray mr-1"
@@ -263,6 +288,28 @@ export default function Appointments() {
     );
   };
 
+  const handleSubmitEditAppointment = async (e) => {
+    e.preventDefault();
+
+    console.log({
+      patientId,
+      createdBy,
+      appointmentStatus,
+      visitDate: time,
+      visitTime,
+    });
+
+    dispatch(
+      editAppointments({
+        patientId,
+        createdBy,
+        appointmentStatus,
+        visitTime: time,
+        visitDate,
+      })
+    );
+  };
+
   useEffect(() => {
     dispatch(getAppointments());
   }, [dispatch]);
@@ -316,6 +363,39 @@ export default function Appointments() {
     dispatch,
     messageDelAppointment,
   ]);
+
+  const handleChange = (e) => {
+    console.log('value:', e.target.value);
+    setAppointmentStatus(e.target.value);
+    setStatusChanged(true);
+  };
+
+  useEffect(() => {
+    if (isErrorEditAppointment) {
+      toast.error(messageEditAppointment);
+      setShowEditModal(true);
+    }
+
+    if (isSuccessEditAppointment) {
+      toast.success(messageEditAppointment);
+      setShowEditModal(false);
+    }
+    if (messageEditAppointment) {
+      dispatch(getAppointments());
+    }
+    dispatch(resetReducerAppointment());
+  }, [
+    isErrorEditAppointment,
+    isSuccessEditAppointment,
+    dispatch,
+    messageEditAppointment,
+  ]);
+
+  const handelCancelEditAppointment = () => {
+    setTimeChanged(false);
+    setStatusChanged(false);
+    setShowEditModal(false);
+  };
 
   return (
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
@@ -391,12 +471,12 @@ export default function Appointments() {
                       onSelectedRowsChange={handleRowSelected}
                     />
                   )}{' '}
-                  <div className="px-4 py-3 text-right sm:px-6">
+                  <div className=" flex justify-between  text-right sm:px-2">
                     <button
                       style={{
                         borderRadius: '10px',
                       }}
-                      className="text-white justify-center  border border-transparent bg-red-500 active:bg-red-700 font-medium px-4 py-2 text-sm rounded shadow hover:shadow-lg outline-none focus:outline-none mr-4 mb-1"
+                      className="text-white justify-center  border border-transparent bg-red-500 active:bg-red-700 font-medium px-4 py-2 text-sm rounded shadow hover:shadow-lg outline-none focus:outline-none "
                       type="button"
                       onClick={handleCancel}
                     >
@@ -404,23 +484,17 @@ export default function Appointments() {
                     </button>
 
                     <button
-                      disabled={!selectedRows && !patientsListByName}
+                      disabled={check}
                       onClick={handleShowModalAppointment}
                       type="button"
                       style={{
                         borderRadius: '10px',
-                        backgroundColor:
-                          selectedRows && patientsListByName
-                            ? currentColor
-                            : currentColor,
-                        opacity: selectedRows && patientsListByName ? '' : 0.25,
+                        backgroundColor: !check ? currentColor : currentColor,
+                        opacity: !check ? '' : 0.25,
                       }}
-                      className=" mb-10 mt-8 text-sm font-semibold text-white p-3 hover:drop-shadow-xl hover:bg-light-gray"
+                      className="  px-4 py-2 text-sm font-medium justify-center rounded shadow border border-transparent text-white hover:drop-shadow-xl hover:bg-light-gray"
                     >
-                      <div className="flex  justify-center ">
-                        <FaPlus className=" mr-2 pt-1 " />
-                        Add Appointment
-                      </div>
+                      Add Appointment
                     </button>
                   </div>
                 </form>
@@ -443,18 +517,42 @@ export default function Appointments() {
 
       {showModalAppointment ? (
         <>
-          <div className="flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+          <div
+            className=" m-2 md:m-10 mt-24 p-2 md:p-10  justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none backdrop-blur-md backdrop-brightness-150 md:backdrop-filter-none
+
+"
+          >
             <div className="relative w-auto my-6 mx-auto max-w-3xl">
-              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-gray-50 outline-none focus:outline-none ">
+                {/* <div className="flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+            <div className="relative w-auto my-6 mx-auto max-w-3xl">
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none"> */}
                 <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t ">
                   <h3 className="text-lg font-semibold">
                     Select time and date
                   </h3>
                 </div>
                 <div className="relative p-6 flex-auto">
-                  <form className=" px-8 pt-6 pb-8 w-full">
-                    <div className="flex justify-between items-center">
-                      <div className="flex gap-8">
+                  <form className=" ">
+                    <div className="grid grid-cols-6 gap-6">
+                      <div className="col-span-6 sm:col-span-2">
+                        <select
+                          onChange={handleChange}
+                          id="status"
+                          name="status"
+                          autoComplete="status"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        >
+                          <option value="">Select</option>
+                          <option value="Reserve">Reserve</option>
+                          <option value="Waiting">Waiting</option>
+                          <option value="Inside">Inside</option>
+                          <option value="Completed">Completed</option>
+                        </select>{' '}
+                      </div>
+                      <div className="col-span-6 sm:col-span-2">
+                        {/* <div className="flex  justify-between items-center">
+                      <div className="flex flex-wrap gap-1"> */}
                         <DatePicker
                           onChange={(date) => handleDate(date)}
                           inline
@@ -462,7 +560,8 @@ export default function Appointments() {
                           name="startDate"
                           dateFormat="MM/dd/yyyy"
                         />
-
+                      </div>{' '}
+                      <div className="col-span-6 sm:col-span-2">
                         <DatePicker
                           inline
                           selected={visitTime}
@@ -474,7 +573,7 @@ export default function Appointments() {
                           dateFormat="h:mm aa"
                         />
                       </div>
-                    </div>
+                    </div>{' '}
                   </form>
                 </div>
                 <div className="flex items-center justify-between p-6 border-t border-solid border-blueGray-200 rounded-b">
@@ -490,13 +589,14 @@ export default function Appointments() {
                   </button>
                   <button
                     onClick={handleSubmitAppointment}
-                    disabled={!timeChanged}
+                    disabled={!timeChanged && !statusChanged}
                     style={{
                       borderRadius: '10px',
-                      backgroundColor: timeChanged
-                        ? currentColor
-                        : currentColor,
-                      opacity: timeChanged ? '' : 0.25,
+                      backgroundColor:
+                        timeChanged && statusChanged
+                          ? currentColor
+                          : currentColor,
+                      opacity: timeChanged && statusChanged ? '' : 0.25,
                     }}
                     className="inline-flex justify-center rounded-md border border-transparent py-2 px-4 text-sm font-medium
                         text-white shadow-sm"
@@ -553,6 +653,95 @@ export default function Appointments() {
                     onClick={handleDelete}
                   >
                     Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      ) : null}
+
+      {showEditModal ? (
+        <>
+          <div className="flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+            <div className="relative w-auto my-6 mx-auto max-w-3xl">
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t ">
+                  <h3 className="text-lg font-semibold">
+                    Select time and date
+                  </h3>
+                </div>
+                <div className="relative p-6 flex-auto">
+                  <form className=" px-8 pt-6 pb-8 w-full">
+                    <div className="flex justify-between items-center">
+                      <div className="flex gap-8">
+                        <DatePicker
+                          onChange={(date) => handleDate(date)}
+                          inline
+                          selected={visitDate}
+                          name="startDate"
+                          dateFormat="MM/dd/yyyy"
+                        />
+
+                        <DatePicker
+                          inline
+                          selected={visitTime}
+                          onChange={(date) => handleTime(date)}
+                          showTimeSelect
+                          showTimeSelectOnly
+                          timeIntervals={1}
+                          timeCaption="Time"
+                          dateFormat="h:mm aa"
+                        />
+                      </div>
+                    </div>{' '}
+                    <select
+                      onChange={handleChange}
+                      id="status"
+                      name="status"
+                      autoComplete="status"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      // value={appointmentStatus}
+                    >
+                      {/* <option value={appointmentStatus}>
+                        {appointmentStatus}
+                      </option> */}
+                      <option value="">Select</option>
+
+                      <option value="Reserve">Reserve</option>
+                      <option value="Waiting">Waiting</option>
+                      <option value="Inside">Inside</option>
+                      <option value="Completed">Completed</option>
+                    </select>{' '}
+                  </form>
+                </div>
+                <div className="flex items-center justify-between p-6 border-t border-solid border-blueGray-200 rounded-b">
+                  <button
+                    style={{
+                      borderRadius: '10px',
+                    }}
+                    className="text-white  bg-red-500 active:bg-red-700 font-semibold  px-4 py-2 text-sm rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+                    type="button"
+                    onClick={handelCancelEditAppointment}
+                  >
+                    Close
+                  </button>
+                  <button
+                    onClick={handleSubmitEditAppointment}
+                    disabled={!timeChanged || !statusChanged}
+                    style={{
+                      borderRadius: '10px',
+                      backgroundColor:
+                        timeChanged || statusChanged
+                          ? currentColor
+                          : currentColor,
+                      opacity: timeChanged || statusChanged ? '' : 0.25,
+                    }}
+                    className="inline-flex justify-center rounded-md border border-transparent py-2 px-4 text-sm font-medium
+                        text-white shadow-sm"
+                    type="submit"
+                  >
+                    Save
                   </button>
                 </div>
               </div>

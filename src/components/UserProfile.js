@@ -1,23 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdOutlineCancel } from 'react-icons/md';
-import { logout, resetReducer } from '../reducers/authSlice';
+import { logout, resetReducer, getUserProfile } from '../reducers/authSlice';
 import Button from '../components/Button';
 import { userProfileData } from '../data/dummy';
 import { useStateContext } from '../contexts/ContextProvider';
 import avatar from '../data/avatar.jpg';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function UserProfile() {
   const { currentColor } = useStateContext();
+  const { user, userProfile } = useSelector((state) => state.auth);
+  const { setIsClicked, initialState } = useStateContext();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = () => {
-    console.log('llll');
     dispatch(logout());
     dispatch(resetReducer());
     navigate('/');
   };
+
+  const handleProfileBtn = () => {
+    setIsClicked(initialState);
+    navigate('profile');
+  };
+
+  useEffect(() => {
+    dispatch(getUserProfile(user._id));
+  }, [dispatch, user]);
+
   return (
     <div className="nav-item absolute right-1 top-16 bg-white dark:bg-[#42464D] p-8 rounded-lg w-96">
       <div className="flex justify-between items-center">
@@ -33,27 +45,28 @@ export default function UserProfile() {
       <div className="flex gap-5 items-center mt-6 border-color border-b-1 pb-6">
         <img
           className="rounded-full h-24 w-24"
-          src={avatar}
+          src={`https://xi-bucket.s3.ca-central-1.amazonaws.com/${userProfile.image}`}
           alt="user-profile"
         />
         <div>
           <p className="font-semibold text-xl dark:text-gray-200">
             {' '}
-            Michael Roberts{' '}
+            {userProfile.name}
           </p>
           <p className="text-gray-500 text-sm dark:text-gray-400">
             {' '}
-            Administrator{' '}
+            {userProfile.role}
           </p>
           <p className="text-gray-500 text-sm font-semibold dark:text-gray-400">
             {' '}
-            info@shop.com{' '}
+            {userProfile.email}
           </p>
         </div>
       </div>
       <div>
         {userProfileData.map((item, index) => (
           <div
+            onClick={handleProfileBtn}
             key={index}
             className="flex gap-5 border-b-1 border-color p-4 hover:bg-light-gray cursor-pointer  dark:hover:bg-[#42464D]"
           >

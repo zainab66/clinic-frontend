@@ -1,10 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import {
+  editUser,
   doctorRegister,
   signin,
   userLogout,
   forgotPassword,
   resetPasswordUser,
+  getUser,
 } from '../actions/authActions';
 
 // Get user from localStorage
@@ -16,6 +18,13 @@ const initialState = {
   isSuccess: false,
   isLoading: false,
   message: '',
+  messageEditProfile: '',
+  isErrorEditProfile: false,
+  isSuccessEditProfile: false,
+  messageGetUserProfile: '',
+  isErrorGetUserProfile: false,
+  isSuccessGetUserProfile: false,
+  userProfile: {},
 };
 
 // Register user
@@ -72,6 +81,29 @@ export const resetPassword = createAsyncThunk(
     }
   }
 );
+
+export const editProfile = createAsyncThunk(
+  'auth/editProfile',
+  async (formData, { rejectWithValue }) => {
+    try {
+      return await editUser(formData);
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getUserProfile = createAsyncThunk(
+  'auth/getUserProfile',
+  async (id, { rejectWithValue }) => {
+    try {
+      return await getUser(id);
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -81,6 +113,12 @@ export const authSlice = createSlice({
       state.isSuccess = false;
       state.isError = false;
       state.message = '';
+      state.messageEditProfile = '';
+      state.isErrorEditProfile = false;
+      state.isSuccessEditProfile = false;
+      state.messageGetUserProfile = '';
+      state.isErrorGetUserProfile = false;
+      state.isErrorGetUserProfile = false;
     },
   },
   extraReducers: (builder) => {
@@ -142,6 +180,34 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload.message;
+      })
+      .addCase(editProfile.pending, (state) => {
+        state.isLoadingEditProfile = true;
+      })
+      .addCase(editProfile.fulfilled, (state, action) => {
+        state.isLoadingEditProfile = false;
+        state.isSuccessEditProfile = true;
+        state.messageEditProfile = action.payload.message;
+      })
+      .addCase(editProfile.rejected, (state, action) => {
+        state.isLoadingEditProfile = false;
+        state.isErrorEditProfile = true;
+        state.messageEditProfile = action.payload.message;
+      })
+
+      .addCase(getUserProfile.pending, (state) => {
+        state.isLoadingGetUserProfile = true;
+      })
+      .addCase(getUserProfile.fulfilled, (state, action) => {
+        state.isLoadingGetUserProfile = false;
+        state.isSuccessGetUserProfile = true;
+        state.messageGetUserProfile = action.payload.message;
+        state.userProfile = action.payload.profile;
+      })
+      .addCase(getUserProfile.rejected, (state, action) => {
+        state.isLoadingGetUserProfile = false;
+        state.isErrorGetUserProfile = true;
+        state.messageGetUserProfile = action.payload.message;
       });
   },
 });

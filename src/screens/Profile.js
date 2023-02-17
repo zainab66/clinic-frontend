@@ -245,24 +245,24 @@ export default function Profile() {
                               <label className="block text-sm font-medium text-gray-700">
                                 Photo
                               </label>
-                              <div className="mt-1 flex items-center">
-                                <span className="inline-block h-12 w-12 overflow-hidden rounded-full bg-gray-100">
-                                  {imagePreview && !newImagePreview ? (
-                                    <img
-                                      src={`https://xi-bucket.s3.ca-central-1.amazonaws.com/${imagePreview}`}
-                                      alt=""
-                                    />
-                                  ) : (
-                                    <img src={newImagePreview} alt="" />
-                                  )}
-                                </span>
-                                <input
-                                  className="ml-4"
-                                  type="file"
-                                  {...register('image')}
-                                  onChange={handleImagePreview}
+                              {/* <div className="mt-1 flex items-center">
+                                <span className="inline-block h-12 w-12 overflow-hidden rounded-full bg-gray-100"> */}
+                              {imagePreview && !newImagePreview ? (
+                                <img
+                                  src={`https://xi-bucket.s3.ca-central-1.amazonaws.com/${imagePreview}`}
+                                  alt=""
                                 />
-                              </div>
+                              ) : (
+                                <img src={newImagePreview} alt="" />
+                              )}
+                              {/* </span> */}
+                              <input
+                                className="ml-4"
+                                type="file"
+                                {...register('image')}
+                                onChange={handleImagePreview}
+                              />
+                              {/* </div> */}
                             </div>
                           </div>
 

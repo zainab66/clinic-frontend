@@ -211,7 +211,7 @@ export default function Profile() {
                     <div className="overflow-hidden  sm:rounded-md">
                       <div className=" bg-gray-50 px-4 ">
                         <div className="grid grid-cols-6 gap-6">
-                          <div className="col-span-6 sm:col-span-6">
+                          {/* <div className="col-span-6 sm:col-span-3">
                             <label className="block text-sm font-medium text-gray-700">
                               Photo
                             </label>
@@ -226,19 +226,36 @@ export default function Profile() {
                                   <img src={newImagePreview} alt="" />
                                 )}
 
-                                {/* {imagePreview && (
-                                  <img
-                                    src={imagePreview}
-                                    alt="Preview"
-                                    style={{
-                                      maxWidth: '100%',
-                                      maxHeight: '200px',
-                                    }}
-                                  />
-                                )} */}
+                
                               </span>
 
                               <div>
+                                <input
+                                  className="ml-4"
+                                  type="file"
+                                  {...register('image')}
+                                  onChange={handleImagePreview}
+                                />
+                              </div>
+                            </div>
+                          </div> */}
+
+                          <div className="col-span-6 sm:col-span-3">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700">
+                                Photo
+                              </label>
+                              <div className="mt-1 flex items-center">
+                                <span className="inline-block h-12 w-12 overflow-hidden rounded-full bg-gray-100">
+                                  {imagePreview && !newImagePreview ? (
+                                    <img
+                                      src={`https://xi-bucket.s3.ca-central-1.amazonaws.com/${imagePreview}`}
+                                      alt=""
+                                    />
+                                  ) : (
+                                    <img src={newImagePreview} alt="" />
+                                  )}
+                                </span>
                                 <input
                                   className="ml-4"
                                   type="file"

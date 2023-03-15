@@ -1,37 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../components/Header';
-import Board from './Board';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  addNewList,
-  getLists,
-  addNewTask,
-  editCard,
-  resetReducerTask,
-} from '../reducers/taskSlice';
 import { useStateContext } from '../contexts/ContextProvider';
-import { FaPlus } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { listSchema } from '../schema/formSchema';
-import { toast } from 'react-toastify';
+import { cardSchema } from '../schema/formSchema';
+import { addNewTask } from '../reducers/taskSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
-export default function Kanban() {
-  const [newListTitle, setNewListTitle] = useState('');
-  const dispatch = useDispatch();
+export default function CardAdder({ onAddCard }) {
+  const [text, setText] = useState('');
+  const { currentColor } = useStateContext();
+  const [showModal, setShowModal] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const createdBy = user._id;
-  const [showModal, setShowModal] = useState(false);
-  const { currentColor } = useStateContext();
-  const {
-    isLoadingDelTask,
-    isErrorDelTask,
-    isSuccessDelTask,
-    messageDelTask,
-    isErrorAddNewList,
-    isSuccessAddNewList,
-    messageAddNewList,
-  } = useSelector((state) => state.task);
+  //   const handleSubmit = (e) => {
+  //     e.preventDefault();
+  //     onAddCard(text);
+  //     setText('');
+  //   };
+
   const {
     register,
     handleSubmit,
@@ -39,78 +25,47 @@ export default function Kanban() {
     formState: { errors },
     reset,
   } = useForm({
-    resolver: yupResolver(listSchema),
+    resolver: yupResolver(cardSchema),
   });
 
   const handelCancel = () => {
     setShowModal(false);
     reset();
   };
+  const dispatch = useDispatch();
 
   const formSubmitHandler = (data) => {
-    dispatch(
-      addNewList({
-        title: data.title,
-        createdBy,
-      })
-    );
+    console.log(data);
+    const title = data.title;
+    const description = data.description;
+    onAddCard(title, description);
+    setShowModal(false);
+
+    if (data) {
+      dispatch(
+        addNewTask({
+          title: data.title,
+          description: data.description,
+          createdBy,
+        })
+      );
+    }
   };
-
-  // const handleAddList = () => {
-  //   dispatch(
-  //     addNewList({
-  //       title: newListTitle,
-  //       createdBy,
-  //     })
-  //   );
-  // };
-
+  const watchDescription = watch('description');
   const watchTitle = watch('title');
 
   const checkSubmitBtn = watchTitle === undefined || watchTitle === undefined;
-  useEffect(() => {
-    dispatch(getLists());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (isErrorAddNewList) {
-      toast.error(messageAddNewList);
-      setShowModal(true);
-    }
-
-    if (isSuccessAddNewList) {
-      toast.success(messageAddNewList);
-      setShowModal(false);
-      reset();
-    }
-    if (messageAddNewList) {
-      dispatch(getLists());
-    }
-    dispatch(resetReducerTask());
-  }, [
-    reset,
-    isErrorAddNewList,
-    isSuccessAddNewList,
-    dispatch,
-    messageAddNewList,
-  ]);
 
   return (
-    <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
-      <div className="flex justify-between">
-        <Header category="App" title="Kanban" />
-        {/* <button
-          onClick={() => setShowModal(true)}
-          type="button"
-          className=" mb-10 mt-8 text-sm font-semibold text-white p-3 hover:drop-shadow-xl hover:bg-light-gray"
-          style={{ backgroundColor: currentColor, borderRadius: '10px' }}
-        >
-          <div className="flex  justify-center ">
-            <FaPlus className=" mr-2 pt-1 " />
-            Add List
-          </div>
-        </button>{' '} */}
-      </div>
+    <>
+      <button
+        onClick={() => setShowModal(true)}
+        type="button"
+        className=" mb-10 mt-8 text-sm font-semibold text-white p-3 hover:drop-shadow-xl hover:bg-light-gray"
+        style={{ backgroundColor: currentColor, borderRadius: '10px' }}
+      >
+        Add Card
+      </button>
 
       {showModal ? (
         <>
@@ -122,7 +77,7 @@ export default function Kanban() {
             <div className="relative w-auto my-6 mx-auto max-w-3xl">
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-gray-50 outline-none focus:outline-none ">
                 <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t ">
-                  <h3 className="text-lg font-semibold">Add new list</h3>
+                  <h3 className="text-lg font-semibold">Add new card</h3>
                 </div>
                 <div className="relative p-6 flex-auto">
                   <form className=" px-8 pt-6 pb-8 w-full">
@@ -137,6 +92,21 @@ export default function Kanban() {
                     {errors.title ? (
                       <span className="text-red-900 text-sm">
                         {errors.title.message}
+                      </span>
+                    ) : (
+                      <></>
+                    )}
+                    <label className="block text-black text-sm  mb-1 pt-1">
+                      Description
+                    </label>
+                    <textarea
+                      name="description"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      {...register('description')}
+                    />
+                    {errors.description ? (
+                      <span className="text-red-900 text-sm">
+                        {errors.description.message}
                       </span>
                     ) : (
                       <></>
@@ -168,7 +138,7 @@ export default function Kanban() {
                     type="submit"
                     onClick={handleSubmit(formSubmitHandler)}
                   >
-                    Add card
+                    Add assistant
                   </button>
                 </div>
               </div>
@@ -176,8 +146,6 @@ export default function Kanban() {
           </div>
         </>
       ) : null}
-
-      <Board />
-    </div>
+    </>
   );
 }

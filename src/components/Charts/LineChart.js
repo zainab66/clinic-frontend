@@ -1,102 +1,57 @@
-import React from 'react';
-import {
-  ChartComponent,
-  SeriesCollectionDirective,
-  SeriesDirective,
-  Inject,
-  LineSeries,
-  Category,
-  Legend,
-  Tooltip,
-  ColumnSeries,
-  DataLabel,
-} from '@syncfusion/ej2-react-charts';
+import React, { useState, useEffect } from 'react';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS } from 'chart.js/auto';
 
-import {
-  lineCustomSeries,
-  LinePrimaryXAxis,
-  LinePrimaryYAxis,
-} from '../../data/dummy';
-import { useStateContext } from '../../contexts/ContextProvider';
+export default function LineChart(patientEachMonth) {
+  const [chartData, setChartData] = useState([]);
 
-export default function LineChart() {
-  const { currentMode } = useStateContext();
-  const Patients2022 = [
-    { month: 'Jan', Patients: 135 },
-    { month: 'Feb', Patients: 128 },
-    { month: 'Mar', Patients: 134 },
-    { month: 'Apr', Patients: 132 },
-    { month: 'May', Patients: 140 },
-    { month: 'Jun', Patients: 132 },
-    { month: 'Jul', Patients: 135 },
-    { month: 'Aug', Patients: 155 },
-    { month: 'Sep', Patients: 138 },
-    { month: 'Oct', Patients: 130 },
-    { month: 'Nov', Patients: 125 },
-    { month: 'Dec', Patients: 132 },
-  ];
-  const Patients2023 = [
-    { month: 'Jan', Patients: 10 },
-    { month: 'Feb', Patients: 28 },
-    { month: 'Mar', Patients: 34 },
-    { month: 'Apr', Patients: 42 },
-    { month: 'May', Patients: 50 },
-    { month: 'Jun', Patients: 62 },
-    { month: 'Jul', Patients: 85 },
-    { month: 'Aug', Patients: 95 },
-    { month: 'Sep', Patients: 148 },
-    { month: 'Oct', Patients: 140 },
-    { month: 'Nov', Patients: 135 },
-    { month: 'Dec', Patients: 142 },
-  ];
-  const primaryxAxis = { valueType: 'Category' };
-  const marker = {
-    visible: true,
-    height: 10,
-    width: 10,
+  const patientsByMonth =
+    chartData.patientEachMonth &&
+    chartData.patientEachMonth.reduce((acc, patient) => {
+      const month = patient.month.substring(0, 7); // Extract year and month from date string
+      if (!acc[month]) {
+        acc[month] = 1; // If month doesn't exist in accumulator, set count to 1
+      } else {
+        acc[month]++; // If month exists in accumulator, increment count
+      }
+      return acc;
+    }, {});
+
+  useEffect(() => {
+    setChartData(patientEachMonth);
+  }, [patientEachMonth]);
+
+  const data = {
+    labels: patientsByMonth && Object.keys(patientsByMonth),
+    datasets: [
+      {
+        label: ' Patients ',
+        data: patientsByMonth && Object.values(patientsByMonth),
+        // chartData.patientEachMonth &&
+        // chartData.patientEachMonth.map((v) => v.patient),
+        // borderColor: 'blue',
+        fill: false,
+      },
+    ],
   };
-  return (
-    <ChartComponent
-      id="line-chart"
-      height="420px"
-      primaryXAxis={primaryxAxis}
-      primaryYAxis={LinePrimaryYAxis}
-      chartArea={{ border: { width: 0 } }}
-      tooltip={{ enable: true }}
-      background={currentMode === 'Dark' ? '#33373E' : '#fff'}
-      legendSettings={{ background: 'white' }}
-    >
-      <Inject
-        services={[
-          LineSeries,
-          Category,
-          Legend,
-          Tooltip,
-          ColumnSeries,
-          DataLabel,
-        ]}
-      />
-      <SeriesCollectionDirective>
-        <SeriesDirective
-          dataSource={Patients2022}
-          xName="month"
-          yName="Patients"
-          name="Patients 2022"
-          type="Line"
-          marker={marker}
-          width={2}
-        />
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    title: {
+      display: true,
+      text: 'Number of Patients by Month',
+    },
+    scales: {
+      yAxes: [
+        {
+          ticks: {
+            beginAtZero: true,
+            stepSize: 1, // <-- set the step size to 5
+          },
+        },
+      ],
+    },
+  };
 
-        <SeriesDirective
-          dataSource={Patients2023}
-          xName="month"
-          yName="Patients"
-          name="Patients 2023"
-          type="Line"
-          marker={marker}
-          width={2}
-        />
-      </SeriesCollectionDirective>
-    </ChartComponent>
-  );
+  return <Line data={data} options={options} height={300} width={500} />;
 }

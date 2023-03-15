@@ -14,14 +14,14 @@ registerLicense(process.env.REACT_APP_KEY);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      {' '}
-      <ContextProvider>
-        <App />{' '}
-      </ContextProvider>
-    </Provider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <Provider store={store}>
+    {' '}
+    <ContextProvider>
+      <App />{' '}
+    </ContextProvider>
+  </Provider>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -4,10 +4,10 @@ import { GoPrimitiveDot } from 'react-icons/go';
 import { IoIosMore } from 'react-icons/io';
 import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
 
-import Pie from '../components/Charts/Pie';
-import LineChart from '../components/Charts/LineChart';
+import BarChart from '../components/Charts/BarChart';
+import PieChart from '../components/Charts/PieChart';
 import Button from '../components/Button';
-import SparkLine from '../components/Charts/SparkLine';
+import LineChart from '../components/Charts/LineChart';
 import Stacked from '../components/Charts/Stacked';
 import { TbDisabled } from 'react-icons/tb';
 import { MdOutlineBloodtype } from 'react-icons/md';
@@ -55,6 +55,8 @@ const DropDown = ({ currentMode }) => (
 );
 
 export default function Main() {
+  const [count, setCount] = useState([]);
+
   const { currentColor, currentMode } = useStateContext();
   const dispatch = useDispatch();
   const {
@@ -80,16 +82,62 @@ export default function Main() {
     isErrorDelPatient,
   } = useSelector((state) => state.patient);
 
-  const patientNumber = patientsList.length;
+  const patientNumber = patientsList && patientsList.length;
   const appointmentNumber = appointmentList.length;
 
-  console.log(patientNumber);
   useEffect(() => {
     dispatch(getPatients());
     dispatch(getAppointments());
   }, [dispatch]);
 
+  const formatDate = (date) => {
+    if (date) {
+      const d = new Date(date);
+      return `${d.getMonth() + 1}`;
+    }
+    return '';
+  };
+
+  const maleNumber = [];
+  patientsList.map((item) => {
+    if (item.gender === 'Male') {
+      const monthName = new Date(
+        2000,
+        formatDate(item.createdAt) - 1
+      ).toLocaleString('default', { month: 'long' });
+
+      maleNumber.push({ patient: item.gender, month: monthName });
+    }
+  });
+
+  const patientEachMonth = [];
+
+  patientsList.map((item) => {
+    if (item.firstName) {
+      const monthName = new Date(
+        2000,
+        formatDate(item.createdAt) - 1
+      ).toLocaleString('default', { month: 'long' });
+
+      patientEachMonth.push({
+        patient: item.firstName,
+        month: monthName,
+        age: item.age,
+      });
+    }
+  });
+
+  console.log(patientEachMonth);
   const earningData = [
+    {
+      icon: <TbDisabled />,
+      amount: patientNumber,
+      percentage: '-12%',
+      title: 'Patients',
+      iconColor: ' #fff',
+      iconBg: currentColor,
+      pcColor: 'red-600',
+    },
     {
       icon: <BiFirstAid />,
       amount: appointmentNumber,
@@ -118,21 +166,16 @@ export default function Main() {
 
       pcColor: 'green-600',
     },
-    {
-      icon: <BsCurrencyDollar />,
-      amount: '39,354',
-      percentage: '-12%',
-      title: 'Refunds',
-      iconColor: ' #fff',
-      iconBg: currentColor,
-      pcColor: 'red-600',
-    },
   ];
 
   return (
-    <div className="mt-24">
-      <div className="flex flex-wrap lg:flex-nowrap justify-center ">
-        <div className="bg-white dark:text-gray-200 dark:bg-secondary-dark-bg h-44 rounded-xl w-full lg:w-80 p-8 pt-9 m-3 bg-hero-pattern bg-no-repeat bg-cover bg-center">
+    // <div className="mt-24">
+    //   <div className="flex flex-wrap lg:flex-nowrap justify-center ">
+
+    <div className=" mt-20">
+      <div className=" px-5  ">
+        <div className="flex flex-wrap  lg:flex-nowrap justify-center">
+          {/* <div className="bg-white dark:text-gray-200 dark:bg-secondary-dark-bg h-44 rounded-xl w-full lg:w-80 p-8 pt-9 m-3 bg-hero-pattern bg-no-repeat bg-cover bg-center">
           <div className="flex justify-between items-center">
             <div>
               <p className="font-bold text-gray-400">Patients</p>
@@ -154,33 +197,92 @@ export default function Main() {
               borderRadius="10px"
             />
           </div>
-        </div>
-        <div className="flex m-3 flex-wrap justify-center gap-1 items-center">
+        </div> */}
+          {/* <div className="flex m-3 flex-wrap justify-center gap-1 items-center"> */}
           {earningData.map((item) => (
-            <div
-              key={item.title}
-              className="bg-white h-44 dark:text-gray-200 dark:bg-secondary-dark-bg md:w-56  p-4 pt-9 rounded-2xl shadow"
-            >
-              <button
-                type="button"
-                style={{ color: item.iconColor, backgroundColor: item.iconBg }}
-                className="text-2xl opacity-0.9 rounded-full  p-4 hover:drop-shadow-xl"
-              >
-                {item.icon}
-              </button>
-              <p className="mt-3">
-                <span className="text-lg font-semibold">{item.amount}</span>
-                <span className={`text-sm text-${item.pcColor} ml-2`}>
-                  {item.percentage}
-                </span>
-              </p>
-              <p className="text-sm text-gray-400  mt-1">{item.title}</p>
+            <div className="w-full md:w-1/2 xl:w-1/3 p-3">
+              <div className="bg-white border rounded shadow p-2">
+                <div className="flex flex-row items-center">
+                  <div className="flex-shrink pr-4">
+                    <button
+                      type="button"
+                      style={{
+                        color: item.iconColor,
+                        backgroundColor: item.iconBg,
+                      }}
+                      className="text-2xl opacity-0.9 rounded-full  p-4 hover:drop-shadow-xl"
+                    >
+                      {item.icon}
+                    </button>
+                  </div>
+                  <div className="flex-1 text-right md:text-center">
+                    <h5 className="text-sm text-gray-400  mt-1">
+                      {item.title}
+                    </h5>
+                    <h3 className="text-lg font-semibold">{item.amount}</h3>
+                  </div>
+                </div>
+              </div>
             </div>
+            // <div
+            //   key={item.title}
+            //   className="bg-white h-44 dark:text-gray-200 dark:bg-secondary-dark-bg md:w-56  p-4 pt-9 rounded-2xl shadow"
+            // >
+            //   <button
+            //     type="button"
+            //     style={{ color: item.iconColor, backgroundColor: item.iconBg }}
+            //     className="text-2xl opacity-0.9 rounded-full  p-4 hover:drop-shadow-xl"
+            //   >
+            //     {item.icon}
+            //   </button>
+            //   <p className="mt-3">
+            //     <span className="text-lg font-semibold">{item.amount}</span>
+            //     <span className={`text-sm text-${item.pcColor} ml-2`}>
+            //       {item.percentage}
+            //     </span>
+            //   </p>
+            //   <p className="text-sm text-gray-400  mt-1">{item.title}</p>
+            // </div>
           ))}
+        </div>
+
+        <div className="flex flex-row flex-wrap flex-grow mt-2">
+          <div className="w-full md:w-3/6	  p-3">
+            <div className="bg-white border rounded shadow">
+              <div className=" p-3">
+                <h5 className="font-bold  text-gray-600">Patients gender</h5>
+              </div>
+              <div className="p-5 ">
+                <BarChart maleData={maleNumber} />{' '}
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full md:w-3/6		 p-3">
+            <div className="bg-white border rounded shadow">
+              <div className=" p-3">
+                <h5 className="font-bold  text-gray-600">Patients age</h5>
+              </div>
+              <div className="p-5 ">
+                <PieChart patientEachMonth={patientEachMonth} />{' '}
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full 	 p-3">
+            <div className="bg-white border rounded shadow">
+              <div className=" p-3">
+                <h5 className="font-bold  text-gray-600">Number of Patients</h5>
+              </div>
+              <div className="p-5 ">
+                <LineChart patientEachMonth={patientEachMonth} />{' '}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="flex gap-10 flex-wrap justify-center">
+      {/* <div className="flex gap-10 flex-wrap justify-center">
         <div className="bg-white dark:text-gray-200 dark:bg-secondary-dark-bg m-3 p-4 rounded-2xl md:w-780  ">
           <div className="flex justify-between">
             <p className="font-semibold text-xl">Revenue Updates</p>
@@ -286,9 +388,9 @@ export default function Main() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
-      <div className="flex gap-10 m-4 flex-wrap justify-center">
+      {/* <div className="flex gap-10 m-4 flex-wrap justify-center">
         <div className="bg-white dark:text-gray-200 dark:bg-secondary-dark-bg p-6 rounded-2xl">
           <div className="flex justify-between items-center gap-2">
             <p className="text-xl font-semibold">Recent Transactions</p>
@@ -339,8 +441,8 @@ export default function Main() {
             <LineChart />
           </div>
         </div>
-      </div>
-
+      </div> */}
+      {/* 
       <div className="flex flex-wrap justify-center">
         <div className="md:w-400 bg-white dark:text-gray-200 dark:bg-secondary-dark-bg rounded-2xl p-6 m-3">
           <div className="flex justify-between">
@@ -485,7 +587,7 @@ export default function Main() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

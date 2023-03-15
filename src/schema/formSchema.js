@@ -141,3 +141,37 @@ export const profileSchema = yup.object().shape({
     .required(' Name is required'),
   image: yup.mixed().required('An image is required'),
 });
+
+export const eventSchema = yup.object().shape({
+  eventTitle: yup
+    .string('Event Title should be a string')
+    // .min(3, 'Event Title should have a minimum length of 3')
+    // .max(12, 'FullName should have a maximum length of 12')
+    .required('Event Title is required'),
+  eventDescription: yup
+    .string('Event Description should be a string')
+    // .min(3, 'Event Description should have a minimum length of 3')
+    // .max(12, 'FullName should have a maximum length of 12')
+    .required('Event Description is required'),
+});
+
+export const cardSchema = yup.object().shape({
+  title: yup
+    .string('Title should be a string')
+    // .min(3, 'Event Title should have a minimum length of 3')
+    // .max(12, 'FullName should have a maximum length of 12')
+    .required(' Title is required'),
+  description: yup
+    .string('Description should be a string')
+    // .min(3, 'Event Description should have a minimum length of 3')
+    // .max(12, 'FullName should have a maximum length of 12')
+    .required(' Description is required'),
+});
+
+export const listSchema = yup.object().shape({
+  title: yup
+    .string('Title should be a string')
+    // .min(3, 'Event Title should have a minimum length of 3')
+    // .max(12, 'FullName should have a maximum length of 12')
+    .required(' Title is required'),
+});

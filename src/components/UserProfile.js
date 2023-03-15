@@ -21,9 +21,9 @@ export default function UserProfile() {
     navigate('/');
   };
 
-  const handleProfileBtn = () => {
+  const handleProfileBtn = (value) => {
     setIsClicked(initialState);
-    navigate('profile');
+    navigate(`/${value}`);
   };
 
   useEffect(() => {
@@ -66,7 +66,6 @@ export default function UserProfile() {
       <div>
         {userProfileData.map((item, index) => (
           <div
-            onClick={handleProfileBtn}
             key={index}
             className="flex gap-5 border-b-1 border-color p-4 hover:bg-light-gray cursor-pointer  dark:hover:bg-[#42464D]"
           >
@@ -79,7 +78,12 @@ export default function UserProfile() {
             </button>
 
             <div>
-              <p className="font-semibold dark:text-gray-200 ">{item.title}</p>
+              <p
+                className="font-semibold dark:text-gray-200 "
+                onClick={() => handleProfileBtn(item.to)}
+              >
+                {item.title}
+              </p>
               <p className="text-gray-500 text-sm dark:text-gray-400">
                 {' '}
                 {item.desc}{' '}

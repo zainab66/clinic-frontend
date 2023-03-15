@@ -557,56 +557,56 @@ export const links = [
         icon: <BsKanban />,
         to: 'dashboard/tasks',
       },
-      {
-        name: 'editor',
-        icon: <FiEdit />,
-        to: 'dashboard/editor',
-      },
-      {
-        name: 'color-picker',
-        icon: <BiColorFill />,
-        to: 'dashboard/colorPicker',
-      },
+      // {
+      //   name: 'editor',
+      //   icon: <FiEdit />,
+      //   to: 'dashboard/editor',
+      // },
+      // {
+      //   name: 'color-picker',
+      //   icon: <BiColorFill />,
+      //   to: 'dashboard/colorPicker',
+      // },
     ],
   },
-  {
-    title: 'Charts',
-    links: [
-      {
-        name: 'line',
-        icon: <AiOutlineStock />,
-      },
-      {
-        name: 'area',
-        icon: <AiOutlineAreaChart />,
-      },
+  // {
+  //   title: 'Charts',
+  //   links: [
+  //     {
+  //       name: 'line',
+  //       icon: <AiOutlineStock />,
+  //     },
+  //     {
+  //       name: 'area',
+  //       icon: <AiOutlineAreaChart />,
+  //     },
 
-      {
-        name: 'bar',
-        icon: <AiOutlineBarChart />,
-      },
-      {
-        name: 'pie',
-        icon: <FiPieChart />,
-      },
-      {
-        name: 'financial',
-        icon: <RiStockLine />,
-      },
-      {
-        name: 'color-mapping',
-        icon: <BsBarChart />,
-      },
-      {
-        name: 'pyramid',
-        icon: <GiLouvrePyramid />,
-      },
-      {
-        name: 'stacked',
-        icon: <AiOutlineBarChart />,
-      },
-    ],
-  },
+  //     {
+  //       name: 'bar',
+  //       icon: <AiOutlineBarChart />,
+  //     },
+  //     {
+  //       name: 'pie',
+  //       icon: <FiPieChart />,
+  //     },
+  //     {
+  //       name: 'financial',
+  //       icon: <RiStockLine />,
+  //     },
+  //     {
+  //       name: 'color-mapping',
+  //       icon: <BsBarChart />,
+  //     },
+  //     {
+  //       name: 'pyramid',
+  //       icon: <GiLouvrePyramid />,
+  //     },
+  //     {
+  //       name: 'stacked',
+  //       icon: <AiOutlineBarChart />,
+  //     },
+  //   ],
+  // },
 ];
 
 export const cartData = [
@@ -888,20 +888,23 @@ export const userProfileData = [
     desc: 'Account Settings',
     iconColor: '#03C9D7',
     iconBg: '#E5FAFB',
+    to: 'dashboard/profile',
   },
-  {
-    icon: <BsShield />,
-    title: 'My Inbox',
-    desc: 'Messages & Emails',
-    iconColor: 'rgb(0, 194, 146)',
-    iconBg: 'rgb(235, 250, 242)',
-  },
+  // {
+  //   icon: <BsShield />,
+  //   title: 'My Inbox',
+  //   desc: 'Messages & Emails',
+  //   iconColor: 'rgb(0, 194, 146)',
+  //   iconBg: 'rgb(235, 250, 242)',
+  //   to: '',
+  // },
   {
     icon: <FiCreditCard />,
     title: 'My Tasks',
     desc: 'To-do and Daily Tasks',
     iconColor: 'rgb(255, 244, 229)',
     iconBg: 'rgb(254, 201, 15)',
+    to: 'dashboard/tasks',
   },
 ];
 

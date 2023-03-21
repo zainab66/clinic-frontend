@@ -5,6 +5,8 @@ import {
   deleteUserInfo,
   editUser,
   activateUser,
+  editAssistant,
+  getAssistant,
 } from '../actions/assistantAction';
 
 const initialState = {
@@ -17,11 +19,25 @@ const initialState = {
   isUpdate: false,
   isSuccessGetAssisstantList: false,
   deleteMessage: '',
+  messageEditAssistantProfile: '',
+  isErrorEditAssistantProfile: false,
+  isSuccessEditAssistantProfile: false,
+  isLoadingeEditAssistantProfile: false,
+  messageGetAssistantProfile: '',
+  isErrorGetAssistantProfile: false,
+  isSuccessGetAssistantProfile: false,
+  isLoadingGetAssistantProfile: false,
+  isSuccessActivateAssistance: false,
+  messageActivateAssistance: '',
+  isErrorActivateAssistance: false,
+  isLoadingActivateAssistance: false,
+
+  assistantProfile: {},
 };
 
 // Register user
 export const addUsers = createAsyncThunk(
-  'auth/addUser',
+  'assistant/addUser',
   async ({ email, fullName, role, createdBy }, { rejectWithValue }) => {
     try {
       return await addUser(email, fullName, role, createdBy);
@@ -31,7 +47,7 @@ export const addUsers = createAsyncThunk(
   }
 );
 export const activateAssistance = createAsyncThunk(
-  'auth/activateAssistance',
+  'assistant/activateAssistance',
   async (token, { rejectWithValue }) => {
     try {
       return await activateUser(token);
@@ -54,7 +70,7 @@ export const getUsers = createAsyncThunk('auth/getUsers', async (thunkAPI) => {
 });
 
 export const deleteUser = createAsyncThunk(
-  'auth/deleteUser',
+  'assistant/deleteUser',
   async (userId, { rejectWithValue }) => {
     try {
       return await deleteUserInfo(userId);
@@ -65,7 +81,7 @@ export const deleteUser = createAsyncThunk(
 );
 
 export const updateUser = createAsyncThunk(
-  'auth/editUser',
+  'assistant/updateUser',
   async (
     {
       email,
@@ -103,6 +119,28 @@ export const updateUser = createAsyncThunk(
   }
 );
 
+export const editAssistantProfile = createAsyncThunk(
+  'assistant/editAssistantProfile',
+  async (formData, { rejectWithValue }) => {
+    try {
+      return await editAssistant(formData);
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getAssistantProfile = createAsyncThunk(
+  'assistant/getAssistantProfile',
+  async (id, { rejectWithValue }) => {
+    try {
+      return await getAssistant(id);
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const assistantSlice = createSlice({
   name: ' assistants',
   initialState,
@@ -116,6 +154,18 @@ export const assistantSlice = createSlice({
       state.isSuccessAddAssisstant = false;
       state.isErrorAddAssisstant = false;
       state.deleteMessage = '';
+      state.messageEditAssistantProfile = '';
+      state.isErrorEditAssistantProfile = false;
+      state.isSuccessEditAssistantProfile = false;
+      state.isLoadingeEditAssistantProfile = false;
+      state.messageGetAssistantProfile = '';
+      state.isErrorGetAssistantProfile = false;
+      state.isSuccessGetAssistantProfile = false;
+      state.isLoadingeGetAssistantProfile = false;
+      state.isSuccessActivateAssistance = false;
+      state.messageActivateAssistance = '';
+      state.isErrorActivateAssistance = false;
+      state.isLoadingActivateAssistance = false;
     },
   },
   extraReducers: (builder) => {
@@ -174,6 +224,44 @@ export const assistantSlice = createSlice({
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.isUpdate = false;
+      })
+      .addCase(editAssistantProfile.pending, (state) => {
+        state.isLoadingeEditAssistantProfile = true;
+      })
+      .addCase(editAssistantProfile.fulfilled, (state, action) => {
+        state.isSuccessEditAssistantProfile = true;
+        state.isErrorEditAssistantProfile = false;
+        state.messageEditAssistantProfile = action.payload.message;
+      })
+      .addCase(editAssistantProfile.rejected, (state, action) => {
+        state.isSuccessEditAssistantProfile = false;
+        state.isErrorEditAssistantProfile = true;
+        state.messageEditAssistantProfile = action.payload.message;
+      })
+      .addCase(getAssistantProfile.pending, (state) => {
+        state.isLoadingGetAssistantProfile = true;
+      })
+      .addCase(getAssistantProfile.fulfilled, (state, action) => {
+        state.isLoadingGetAssistantProfile = false;
+        state.isSuccessGetAssistantProfile = true;
+        state.messageGetAssistantProfile = action.payload.message;
+        state.assistantProfile = action.payload.profile;
+      })
+      .addCase(getAssistantProfile.rejected, (state, action) => {
+        state.isLoadingGetAssistantProfile = false;
+        state.isErrorGetAssistantProfile = true;
+        state.messageGetAssistantProfile = action.payload.message;
+      })
+      .addCase(activateAssistance.pending, (state) => {
+        state.isLoadingActivateAssistance = true;
+      })
+      .addCase(activateAssistance.fulfilled, (state, action) => {
+        state.isSuccessActivateAssistance = true;
+        state.messageActivateAssistance = action.payload.message;
+      })
+      .addCase(activateAssistance.rejected, (state, action) => {
+        state.isErrorActivateAssistance = true;
+        state.messageActivateAssistance = action.payload.message;
       });
   },
 });

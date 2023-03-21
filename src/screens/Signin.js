@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 export default function Signin() {
-  const { user, isError, isSuccess, message } = useSelector(
+  const { user, isErrorLogin, isSuccessLogin, messageLogin } = useSelector(
     (state) => state.auth
   );
 
@@ -35,17 +35,18 @@ export default function Signin() {
   };
 
   useEffect(() => {
-    if (isError) {
-      toast.error(message);
+    if (isErrorLogin) {
+      toast.error(messageLogin);
     }
 
-    if (user || isSuccess) {
+    if (isSuccessLogin) {
+      toast.success(messageLogin);
+
       navigate('/dashboard');
       reset();
+      dispatch(resetReducer());
     }
-
-    dispatch(resetReducer());
-  }, [user, navigate, message, isError, isSuccess, dispatch, reset]);
+  }, [navigate, messageLogin, isErrorLogin, isSuccessLogin, dispatch, reset]);
 
   return (
     <>

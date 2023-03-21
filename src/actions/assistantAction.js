@@ -2,6 +2,8 @@ import Axios from 'axios';
 import { toast } from 'react-toastify';
 
 const baseURL = 'https://xi-team-api.onrender.com/api';
+//'http://localhost:3001/api';
+//'https://xi-team-api.onrender.com/api';
 // || 'http://localhost:3001/api';
 
 // Add User
@@ -43,7 +45,6 @@ export const activateUser = async (token) => {
   const response = await Axios.post(`${baseURL}/assistant/email-activate`, {
     token,
   });
-
   return response.data;
 };
 
@@ -69,5 +70,20 @@ export const editUser = async (assistant) => {
     }
   );
 
+  return response.data;
+};
+
+export const editAssistant = async (formData) => {
+  const response = await Axios.put(
+    `${baseURL}/assistant/editAssistant`,
+    formData,
+    {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }
+  );
+  return response.data;
+};
+export const getAssistant = async (id) => {
+  const response = await Axios.get(`${baseURL}/assistant/getAssistant/${id}`);
   return response.data;
 };

@@ -1,20 +1,51 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { activateAssistance } from '../reducers/assistantSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import {
+  getAssistantProfile,
+  editAssistantProfile,
+  resetAssisstanceReducer,
+} from '../reducers/assistantSlice';
+import { ToastContainer } from 'react-toastify';
 
 export default function ActivateUser() {
   const { token } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {
+    isErrorActivateAssistance,
+    messageActivateAssistance,
+    isSuccessActivateAssistance,
+  } = useSelector((state) => state.assistant);
 
   const handleSubmit = async () => {
     dispatch(activateAssistance(token));
-    navigate('/login');
+    // navigate('/login');
   };
+  useEffect(() => {
+    if (isErrorActivateAssistance) {
+      toast.error(messageActivateAssistance);
+    }
 
+    if (isSuccessActivateAssistance) {
+      toast.success(messageActivateAssistance);
+
+      navigate('/login');
+      dispatch(resetAssisstanceReducer());
+    }
+  }, [
+    isErrorActivateAssistance,
+    isSuccessActivateAssistance,
+    dispatch,
+    messageActivateAssistance,
+    navigate,
+  ]);
   return (
     <>
+      <ToastContainer />
+
       <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md space-y-8">
           <div>

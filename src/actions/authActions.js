@@ -2,6 +2,8 @@ import Axios from 'axios';
 import { toast } from 'react-toastify';
 
 const baseURL = 'https://xi-team-api.onrender.com/api';
+//'http://localhost:3001/api';
+//'https://xi-team-api.onrender.com/api';
 // || 'http://localhost:3001/api';
 
 // Register User
@@ -30,11 +32,11 @@ export const signin = async (email, password) => {
   if (response.data) {
     localStorage.setItem('user', JSON.stringify(response.data.user));
   }
-  if (response.data.message === 'Login successfully') {
-    toast.success(response.data.message);
-  } else {
-    toast.error(response.data.message);
-  }
+  // if (response.data.message === 'Login successfully') {
+  //   toast.success(response.data.message);
+  // } else {
+  //   toast.error(response.data.message);
+  // }
   return response.data;
 };
 

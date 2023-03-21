@@ -1,13 +1,19 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout, resetReducer } from '../reducers/authSlice';
 import { useNavigate } from 'react-router-dom';
-
+import { Outlet } from 'react-router-dom';
+import {
+  getAssistantProfile,
+  editAssistantProfile,
+  resetAssisstanceReducer,
+} from '../reducers/assistantSlice';
 import { Fragment } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import AddPatient from './AddPatient';
 import PatientsList from './PatientsList';
+import { ToastContainer } from 'react-toastify';
 
 const navigation = [
   { name: 'Dashboard', href: '#', current: true },
@@ -23,117 +29,126 @@ function classNames(...classes) {
 export default function AssistanceDashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+  const {
+    assistantProfile,
+    isSuccessEditAssistantProfile,
+    messageEditAssistantProfile,
+    isErrorEditAssistantProfile,
+  } = useSelector((state) => state.assistant);
 
   const handleLogout = () => {
     dispatch(logout());
     dispatch(resetReducer());
     navigate('/');
   };
-
-  const Tabs = ({ color }) => {
-    const [openTab, setOpenTab] = React.useState(1);
-    return (
-      <>
-        <div className="flex flex-wrap">
-          <div className="w-full">
-            <ul
-              className="flex mb-0 list-none flex-wrap pt-3 pb-4 flex-row"
-              role="tablist"
-            >
-              <li className="-mb-px mr-2 last:mr-0 flex-auto text-center">
-                <a
-                  className={
-                    'text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal ' +
-                    (openTab === 1
-                      ? 'text-white bg-' + color + '-600'
-                      : 'text-' + color + '-600 bg-white')
-                  }
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setOpenTab(1);
-                  }}
-                  data-toggle="tab"
-                  href="#link1"
-                  role="tablist"
-                >
-                  Add Patient
-                </a>
-              </li>
-              <li className="-mb-px mr-2 last:mr-0 flex-auto text-center">
-                <a
-                  className={
-                    'text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal ' +
-                    (openTab === 2
-                      ? 'text-white bg-' + color + '-600'
-                      : 'text-' + color + '-600 bg-white')
-                  }
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setOpenTab(2);
-                  }}
-                  data-toggle="tab"
-                  href="#link2"
-                  role="tablist"
-                >
-                  Patients List
-                </a>
-              </li>
-              <li className="-mb-px mr-2 last:mr-0 flex-auto text-center">
-                <a
-                  className={
-                    'text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal ' +
-                    (openTab === 3
-                      ? 'text-white bg-' + color + '-600'
-                      : 'text-' + color + '-600 bg-white')
-                  }
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setOpenTab(3);
-                  }}
-                  data-toggle="tab"
-                  href="#link3"
-                  role="tablist"
-                >
-                  Dashboard Search
-                </a>
-              </li>
-            </ul>
-            <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded">
-              <div className="px-4 py-5 flex-auto">
-                <div className="tab-content tab-space">
-                  <div
-                    className={openTab === 1 ? 'block' : 'hidden'}
-                    id="link1"
-                  >
-                    <AddPatient />
-                  </div>
-                  <div
-                    className={openTab === 2 ? 'block' : 'hidden'}
-                    id="link2"
-                  >
-                    <PatientsList />
-                  </div>
-                  <div
-                    className={openTab === 3 ? 'block' : 'hidden'}
-                    id="link3"
-                  >
-                    <p>
-                      Efficiently unleash cross-media information without
-                      cross-media value. Quickly maximize timely deliverables
-                      for real-time schemas.
-                      <br />
-                      <br /> Dramatically maintain clicks-and-mortar solutions
-                      without functional solutions.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  };
+  useEffect(() => {
+    dispatch(getAssistantProfile(user._id));
+  }, [dispatch, user]);
+  // const Tabs = ({ color }) => {
+  //   const [openTab, setOpenTab] = React.useState(1);
+  //   return (
+  //     <>
+  //       <div className="flex flex-wrap">
+  //         <div className="w-full">
+  //           <ul
+  //             className="flex mb-0 list-none flex-wrap pt-3 pb-4 flex-row"
+  //             role="tablist"
+  //           >
+  //             <li className="-mb-px mr-2 last:mr-0 flex-auto text-center">
+  //               <a
+  //                 className={
+  //                   'text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal ' +
+  //                   (openTab === 1
+  //                     ? 'text-white bg-' + color + '-600'
+  //                     : 'text-' + color + '-600 bg-white')
+  //                 }
+  //                 onClick={(e) => {
+  //                   e.preventDefault();
+  //                   setOpenTab(1);
+  //                 }}
+  //                 data-toggle="tab"
+  //                 href="#link1"
+  //                 role="tablist"
+  //               >
+  //                 Add Patient
+  //               </a>
+  //             </li>
+  //             <li className="-mb-px mr-2 last:mr-0 flex-auto text-center">
+  //               <a
+  //                 className={
+  //                   'text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal ' +
+  //                   (openTab === 2
+  //                     ? 'text-white bg-' + color + '-600'
+  //                     : 'text-' + color + '-600 bg-white')
+  //                 }
+  //                 onClick={(e) => {
+  //                   e.preventDefault();
+  //                   setOpenTab(2);
+  //                 }}
+  //                 data-toggle="tab"
+  //                 href="#link2"
+  //                 role="tablist"
+  //               >
+  //                 Patients List
+  //               </a>
+  //             </li>
+  //             <li className="-mb-px mr-2 last:mr-0 flex-auto text-center">
+  //               <a
+  //                 className={
+  //                   'text-xs font-bold uppercase px-5 py-3 shadow-lg rounded block leading-normal ' +
+  //                   (openTab === 3
+  //                     ? 'text-white bg-' + color + '-600'
+  //                     : 'text-' + color + '-600 bg-white')
+  //                 }
+  //                 onClick={(e) => {
+  //                   e.preventDefault();
+  //                   setOpenTab(3);
+  //                 }}
+  //                 data-toggle="tab"
+  //                 href="#link3"
+  //                 role="tablist"
+  //               >
+  //                 Dashboard Search
+  //               </a>
+  //             </li>
+  //           </ul>
+  //           <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded">
+  //             <div className="px-4 py-5 flex-auto">
+  //               <div className="tab-content tab-space">
+  //                 <div
+  //                   className={openTab === 1 ? 'block' : 'hidden'}
+  //                   id="link1"
+  //                 >
+  //                   <AddPatient />
+  //                 </div>
+  //                 <div
+  //                   className={openTab === 2 ? 'block' : 'hidden'}
+  //                   id="link2"
+  //                 >
+  //                   <PatientsList />
+  //                 </div>
+  //                 <div
+  //                   className={openTab === 3 ? 'block' : 'hidden'}
+  //                   id="link3"
+  //                 >
+  //                   <p>
+  //                     Efficiently unleash cross-media information without
+  //                     cross-media value. Quickly maximize timely deliverables
+  //                     for real-time schemas.
+  //                     <br />
+  //                     <br /> Dramatically maintain clicks-and-mortar solutions
+  //                     without functional solutions.
+  //                   </p>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </>
+  //   );
+  // };
 
   return (
     <>
@@ -202,9 +217,22 @@ export default function AssistanceDashboard() {
                         <span className="sr-only">Open user menu</span>
                         <img
                           className="h-8 w-8 rounded-full"
+                          src={`https://xi-bucket.s3.ca-central-1.amazonaws.com/${assistantProfile.image}`}
+                          alt="user-profile"
+                        />
+                        <div className="pt-2 ml-3">
+                          <p>
+                            <span className="text-gray-400 text-14">Hi,</span>{' '}
+                            <span className="text-gray-400 font-bold ml-1 text-14">
+                              {assistantProfile.fullName}
+                            </span>
+                          </p>
+                        </div>
+                        {/* <img
+                          className="h-8 w-8 rounded-full"
                           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                           alt=""
-                        />
+                        /> */}
                       </Menu.Button>
                     </div>
                     <Transition
@@ -220,7 +248,7 @@ export default function AssistanceDashboard() {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="#"
+                              href="/assistance/dashboard/profile"
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
                                 'block px-4 py-2 text-sm text-gray-700'
@@ -287,12 +315,13 @@ export default function AssistanceDashboard() {
           </>
         )}
       </Disclosure>
-
-      <main>
+      <ToastContainer />
+      <Outlet />
+      {/* <main>
         <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
           <Tabs color="blue" />
         </div>
-      </main>
+      </main> */}
     </>
   );
 }

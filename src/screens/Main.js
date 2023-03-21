@@ -83,7 +83,7 @@ export default function Main() {
   } = useSelector((state) => state.patient);
 
   const patientNumber = patientsList && patientsList.length;
-  const appointmentNumber = appointmentList.length;
+  const appointmentNumber = appointmentList && appointmentList.length;
 
   useEffect(() => {
     dispatch(getPatients());

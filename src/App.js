@@ -23,6 +23,8 @@ import { getPatients } from './reducers/patientSlice';
 import ForgetPassword from './screens/ForgetPassword';
 import ResetPassword from './screens/ResetPassword';
 import Profile from './screens/Profile';
+import AssistanceProfile from './screens/AssistanceProfile';
+import AssistantMain from './screens/AssistantMain';
 
 function App() {
   const dispatch = useDispatch();
@@ -66,7 +68,10 @@ function App() {
             <Route
               path="/assistance/dashboard"
               element={<AssistanceDashboard />}
-            />
+            >
+              <Route path="" element={<AssistantMain />} />
+              <Route path="profile" element={<AssistanceProfile />} />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>

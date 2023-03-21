@@ -25,22 +25,24 @@ const initialState = {
   isErrorGetUserProfile: false,
   isSuccessGetUserProfile: false,
   userProfile: {},
+  isSuccessSignup: false,
+  isLoadingSignup: false,
+  isErrorSignup: false,
+  messageSignup: '',
+  isLoadingLogin: false,
+  isErrorLogin: false,
+  messageLogin: '',
+  isSuccessLogin: false,
 };
 
 // Register user
 export const signup = createAsyncThunk(
-  'auth/register',
-  async (name, email, password, role, thunkAPI) => {
+  'auth/signup',
+  async ({ name, email, password, role }, { rejectWithValue }) => {
     try {
       return await doctorRegister(name, email, password, role);
     } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -109,6 +111,10 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     resetReducer: (state) => {
+      state.isSuccessSignup = false;
+      state.isLoadingSignup = false;
+      state.isErrorSignup = false;
+      state.messageSignup = '';
       state.isLoading = false;
       state.isSuccess = false;
       state.isError = false;
@@ -119,37 +125,40 @@ export const authSlice = createSlice({
       state.messageGetUserProfile = '';
       state.isErrorGetUserProfile = false;
       state.isErrorGetUserProfile = false;
+      state.isLoadingLogin = false;
+      state.isErrorLogin = false;
+      state.messageLogin = '';
+      state.isSuccessLogin = false;
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(signup.pending, (state) => {
-        state.isLoading = true;
+        state.isLoadingSignup = true;
       })
       .addCase(signup.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.message = action.payload.message;
+        state.isLoadingSignup = false;
+        state.isSuccessSignup = true;
+        state.messageSignup = action.payload.message;
       })
       .addCase(signup.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.message = action.payload.message;
-        state.user = null;
+        state.isLoadingSignup = false;
+        state.isErrorSignup = true;
+        state.messageSignup = action.payload.message;
       })
       .addCase(login.pending, (state) => {
-        state.isLoading = true;
+        state.isLoadingLogin = true;
       })
       .addCase(login.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.message = action.payload.message;
+        state.isLoadingLogin = false;
+        state.isSuccessLogin = true;
+        state.messageLogin = action.payload.message;
         state.user = action.payload.user;
       })
       .addCase(login.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.message = action.payload.message;
+        state.isLoadingLogin = false;
+        state.isErrorLogin = true;
+        state.messageLogin = action.payload.message;
         state.user = null;
       })
       .addCase(logout.fulfilled, (state) => {
